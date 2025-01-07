@@ -82,5 +82,13 @@ NOTE:
 
 
 - part - 4: Implementing Logic
+- part - 5: manipulating CSS (styles)
 --------------------------------------------------------------------------------------------------------
 
+document.querySelector('body').style.backgroundColor = '#60b347'
+
+- the above code works for entire 'body' element and use 'camelCase' for 'backgroundColor' but in CSS we instead used
+    'background-color' and assign a value for the green color appearance in a 'STRING'.
+- whenever we are manipulating the styles / css of a page mention it in a 'STRING'
+        as '#60b347' not as -- #60b347
+- this will modify at in-line (in-line styling!)
