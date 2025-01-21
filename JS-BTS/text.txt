@@ -79,4 +79,5 @@ SINGLE-THREADED NON-BLOCKING EVENT LOOP:                          // thread: set
 
     - so we have non-blocking event loop..
       - takes the long-running tasks.. executes them in the BackGround and adds to the main thread once finished.
-    - 
+
+this is all about.. JS non-blocking event loop concurrency model with a single thread.
