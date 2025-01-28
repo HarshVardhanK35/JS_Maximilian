@@ -1,5 +1,5 @@
 /**
- * SETS
+ * --- SETS
  * ------- syn: new Set( type: iterable )
  * collection of unique values .. no duplicates and can have mixed of data types .. order is irrelevant
  * new Set () ... takes in an "iterable" ... commonly an array is passed !!!
@@ -21,7 +21,8 @@
  *
  */
 
-// SETS
+// --- SETS
+// --------------
 const arr = ['jonas', 'Udemy', 'teaching']
 const set = new Set(arr)
 
@@ -49,7 +50,7 @@ const newSet = new Set([...arr])
 
 
 /**
- * SETS - part.2
+ * --- SETS - part.2
  * ----------------
  * new methods that were introduced in new era of JS .. (ES-2025)
  *
@@ -101,7 +102,7 @@ const symmetricDiffFoods = italianFoods.symmetricDifference(mexicanFoods)
 
 
 /**
- * MAPS
+ * --- MAPS
  * -------
  * Maps are DS where we can map values to keys
  *  - just like objects, data is stored in key value pairs
@@ -134,7 +135,7 @@ restaurant.set(2, 'xyz street, vzm')
 // console.log(restaurant.get('name'))
 // console.log(restaurant.get(1)) 
 
-// use-case (1)
+// --- use-case (1)
 restaurant.set('open', 5)
 restaurant.set('close', 22) // ... setting opening and closing hours of rest.
 
@@ -144,7 +145,7 @@ restaurant.set(false, 'we are close') // ... works based on the condition either
 const checkInTime = 24;
 // console.log(restaurant.get( checkInTime > restaurant.get('open') && checkInTime < restaurant.get('close')))
 
-// use-case (2)
+// --- use-case (2)
 // restaurant.set([1, 2], 'arrays') and restaurant.get([1, 2]) are not same .. [1, 2] has different reference points
 // these two arrays in 'set' and 'get' reference to different addresses
 // so, create an array constant and use that instead (because array constant refers to same address)
@@ -153,11 +154,11 @@ restaurant.set(arr0, 'array things')
 // console.log(restaurant.get(arr0))
 
 /**
- * Maps - Part (2)
+ * --- Maps - Part (2)
  * ------------------
  * 1. conversion of objects to maps
  * 2. iteration on maps (as maps are also iterables)
- * 3. 
+ * 3. conversion of map to an array
  */
 
 const restaurant1 = {
@@ -190,11 +191,105 @@ const question = new Map([
 ]) 
 
 // --- iterate over map
-console.log('Choose any option...')
+// console.log('Choose any option...')
 for (const [key, value] of question) {
   if (typeof key === 'number') {
-    console.log(`Option ${key}: ${value}`)
+    // console.log(`Option ${key}: ${value}`)
   }
 }
-const option = +prompt('Choose an option (must be 1 or 2 or 3)')
-console.log(question.get(question.get('correct') === option))
+// const option = +prompt('Choose an option (must be 1 or 2 or 3)')
+// console.log(question.get(question.get('correct') === option))
+
+// --- conversion of map to an array
+// console.log([...question])      // returns an array of arrays
+// console.log([...question.keys()])   // returns an array of keys
+// console.log([...question.values()])   // returns an array of values
+
+/** ---------------------------------------------------------------------------------------------------
+ * which DS to use?
+ * 
+ * sources of data:
+ * - from the web service (data that is fetched from the web)
+ * - from the user (user input or data written on DOM)
+ * - from the programming language (source code)
+ * 
+ * we always have collections of data and we need to store them in a DS
+ * 
+ * but there are 4 types of DS that we can use:
+ * - Arrays: when we need an ordered list of values
+ * - Objects: when we need a collection of key-value pairs (keys are to describe the values)
+ *    - JSON data that we get from the web is always in the form of objects
+ * - Sets: when we need to store unique values
+ * - Maps: when we need to map values to keys
+ * 
+ * when to use which DS?
+ * 
+ * --- Arrays vs Sets: only value data
+ * - Arrays: when we need an ordered list of values, and when manipulation of data is needed! and there are so many methods on arrays
+ * - Sets: when working on unique values, no duplicates allowed, needed when high performance is required! 
+ * --- working and operations on sets is more faster than compared to arrays
+ * 
+ * --- Objects vs Maps: key-value pairs
+ * - Objects: simple for key-value storage .. easy to access data through dot (.) and square braces [] .. 
+ *      - use objects when functions as values are needed .. we can use this keyword on objects but not on maps .. 
+ * - Maps: map keys can have any data types .. easy to iterate .. 
+ */
+
+// challenge #3
+/* 
+Let's continue with our football betting app! This time, we have a map with a log of the events that happened during the game. 
+  The values are the events themselves, and the keys are the minutes in which each event happened 
+      (a football game has 90 minutes plus some extra time).
+
+1. Create an array 'events' of the different game events that happened (no duplicates)
+2. After the game has finished, is was found that the yellow card from minute 64 was unfair. 
+    So remove this event from the game events log.
+3. Print the following string to the console: "An event happened, on average, every 9 minutes" 
+    (keep in mind that a game has 90 minutes)
+4. Loop over the events and log them to the console, 
+    marking whether it's in the first half or second half (after 45 min) of the game, like this:
+      [FIRST HALF] 17: ⚽️ GOAL
+
+GOOD LUCK 😀
+*/
+
+const gameEvents = new Map([
+  [17, '⚽️ GOAL'],
+  [36, '🔁 Substitution'],
+  [47, '⚽️ GOAL'],
+  [61, '🔁 Substitution'],
+  [64, '🔶 Yellow card'],
+  [69, '🔴 Red card'],
+  [70, '🔁 Substitution'],
+  [72, '🔁 Substitution'],
+  [76, '⚽️ GOAL'],
+  [80, '⚽️ GOAL'],
+  [92, '🔶 Yellow card'],
+]);
+
+// 1. 
+const events = [new Set(...gameEvents.values())]
+// console.log(events)
+
+// 2. 
+gameEvents.delete(64)
+
+// 3. 
+const keys = [...gameEvents.keys()]
+// const highTime = Math.max(...keys) // way-1
+
+let maxTime = keys[0]
+for(let i = 0; i < keys.length; i++) {
+  if (maxTime < keys[i]) {
+    maxTime = keys[i]
+  } 
+}
+// console.log(maxTime) // way-2
+console.log(`An event happened, on average, every ${maxTime / gameEvents.size} minutes`)
+
+// 4.
+for (let [min, event] of gameEvents){
+  const half = min <= 45 ? 'FIRST' : 'SECOND'
+  console.log(`${half} HALF ${min}: ${event}`)
+}
+
