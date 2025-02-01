@@ -65,4 +65,3 @@
 
 // calcAverage(totals)
 // calcAverage(tips)
-

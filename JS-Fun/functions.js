@@ -1,3 +1,4 @@
+'use strict';
 // functions are objects and have methods and properties
 // ex for methods: .bind, .call, .apply
 // ex for properties: .name, .length .. on functions
@@ -217,7 +218,6 @@ const flightData = [583, 'George']
 // - this also allows us to manually set the 'this' keyword, but it does not immediately call the function 
 //  - instead, it returns a new function where 'this' keyword is bound
 // 
-
 const euroWings = {
     airline: 'Eurowings',
     iataCode: 'EW',
@@ -228,13 +228,71 @@ const euroWings = {
 const bookEW = book.bind(euroWings) // this does not immediately call the function, but returns a new function
 // bookEW(23, 'Sarah')
 
-// ... partial applications: 
-// - part of arguments of the original function are set, while using .bind to set this manually!
-// const bookEW23 = book.bind(euroWings, 23)
-// bookEW('Harsha')
+// case(1) partial applications: 
+const airIndia = {
+    airline: 'Air India',
+    iataCode: 'AI',
+    bookings: []
+}
 
-// ... case(2): 
-// when we use objects together with event listeners
+// as book methods takes two arguments, that are 'flightNum' and 'name' .. 
+// if we passed one argument while calling "bind" onto 'book' method, then it will be a partial application .. 
+// this is specifying parts of parameters of a function before calling it .. 
+// in real-world, this is useful when we have a function with many parameters
+
+const bookAI = book.bind(airIndia, 45) 
+// bookAI('Vardhan') // Vardhan booked a seat on Air India flight AI45
+
+//
+// case(2) with event listeners:
+const airGaruda = {
+    airline: 'Garuda Indonesia',
+    iataCode: 'GA',
+    bookings: []
+}
+airGaruda.planes = 300
+// console.log(airGaruda)
+
+airGaruda.buyPlane = function () {
+
+    console.log(this)
+    this.planes = this.planes + 1
+    console.log(this.planes)
+}
+
+document.querySelector('.buy').addEventListener('click', airGaruda.buyPlane.bind(airGaruda))
+
+// console.log(airGaruda.buyPlane.bind(airGaruda)) 
+// returns: 
+// ƒ () {
+//     console.log(this)                    |    
+//     this.planes = this.planes + 1        | -> this fn is called when logged "airGaruda.buyPlane.bind(airGaruda)" to console
+//     console.log(this.planes)             |
+// }
+
+// explanation:
+// - here, 'this' keyword is not pointing to the object 'airGaruda' but to the 'buy' button element 
+//  - so we use bind method to point 'this' keyword to the object 'airGaruda'
+
+// 
+// case(3) partial applications:
+const addTax = (rate, value) => {
+    return value + value * rate
+}
+const addVAT = addTax.bind(null, 0.23)
+// console.log(addVAT(23))
+
+// explanation:
+// - here, we are setting the 'this' keyword to null, as we do not use 'this' keyword in the above function - addTax
+
+// --- using function returning another function ..
+const addTax1 = function (rate) {
+    return function (value) {
+        return(value + value * rate)
+    }
+}
+const addVAT1 = addTax1(0.23)
+// console.log(addVAT1(100))
 
 
 // ------------------------------------------------------------------------------------------------------------
@@ -278,7 +336,6 @@ BONUS TEST DATA 2: [1, 5, 3, 9, 6, 1]
 
 GOOD LUCK 😀
 */
-
 const poll = {
     
     question: "what is your favourite programming language?",
@@ -320,26 +377,143 @@ const anObject = {
 
 // ------------------------------------------------------------------------------------------------------------
 // --- 8. Immediately Invoked Functions
-// in JS we just write a function and call it immediately and then after that, we do not call it again (run once functions)
+// in JS, we need a function that is executed immediately and only once .. and then never again
+// this is called IIFE (Immediately Invoked Function Expression)
 
-// normal function
+// this disappears after it's execution
+
+// -- normal function
 // const runOnce = function () {
 //     console.log('This will never run again')
 // }
 // runOnce()
 
-// IIFE
+// -- IIFE
 // 1.
-(function () {
-    console.log('This will never run again')
-})()
+// (function () {
+//     console.log('This will never run again')
+// })();
+
+// Correct IIFE syntax
+// (() => {
+//     console.log('This will never run again');
+// })();
 
 // 2.
-(() => {
-    console.log('This will also never run again');
-})()
+// (() => {
+//     console.log('This will also never run again');
+// })()
 
 // (function () {
 //     console.log('This will also never run again')            } this is a function expression wrapped in parentheses
 // }) ()                                                 --- called immediately here
+
+// SKIPPED THIS CONCEPT .. AS IT IS PROVIDING A CONSTANT ERROR OF "Uncaught TypeError: {(intermediate value)} is not a function"
+
+
+// ------------------------------------------------------------------------------------------------------------
+// --- 9. Closures (part-1) --- HARDEST CONCEPT IN JS
+// a closure is a function that has access to the parent scope, even after the parent function has closed
+
+// a simple example for this is:
+
+const var1 = 23;
+const firstClosure = function () {
+    const var2 = 10;
+    console.log(var1 * var2)
+}
+// firstClosure() // --- 230
+
+// -- so, 'var1' belongs to a different scope but it is accessible in the function 'firstClosure' which is of different scope
+// -- this is because of "closure" --- (but this is not the actual way of representing a closure)
+
+// actual example for closure:
+function outerScope () {
+    const outVar = 10;
+    return function innerScope (inVar) {
+        console.log(outVar * inVar)
+    }
+}
+const closFn = outerScope()
+// closFn(20) // --- 200
+
+// here closFn is of global scope but has access to outVar in the outerScope function was no longer active 
+
+// reason why the innerScope fn can access the outVar is because of closure 
+//  - the outVar is stored in the heap memory and not in the call stack (not garbage collected) 
+//      - even after the outerScope function is closed / executed
+
+// with closures everything inside the fn has access to the variables outside of that fn
+// ex: used inside fetch API, event listeners, and timers etc.
+
+// a closure is a function that remembers all the variables that were present at the function's birthplace
+// a closure has priority over the scope chain
+
+// a closer look into closures: "console.dir(closFn)" .. this will have 'scopes' property which will have the 'outer scope variables'
+
+
+// ------------------------------------------------------------------------------------------------------------
+// --- 10. Closures (part-2) --- More closure examples
+
+// -- example-1
+// --- closure happens when you have re-assigned function without returning them
+let f;
+const g = function () {
+    const a = 23;
+    f = function () {
+        console.log(a * 2)
+    }
+}  
+
+const h = function () {
+    const b = 777;
+    f = function () {
+        console.log(b * 2)
+    }
+}
+
+// here 'f' will be assigned to 'a' variable 
+// g()
+// f() // --- 46
+
+// re-assigning the value of 'f' with 'h' --- here 'f' has different scope and assigned to 'b' from 'a' 
+// h()
+// f() // --- 1554
+
+// -- example-2
+// timer example with closures 
+const boardPassengers = function (n, waitSec) {
+    const personsPerGroup = n / 3;
+
+    setTimeout(() => {
+        console.log(`we're now onboarding all ${n} passengers`)
+        console.log(`There are 3 groups, each with ${personsPerGroup} passengers`)
+    }, waitSec * 1000)
+
+    console.log(`We will start boarding in ${waitSec} seconds`)
+}
+
+// this will work as 'personsPerGroup' and it is a global variable and is accessible in the function
+const personsPerGroup = 1000
+// boardPassengers(180, 3)
+
+// explanation:
+// - but 'personsPerGroup' in the function is a local variable and is accessible in the function even after the function is closed, cause of closure
+
+
+// ------------------------------------------------------------------------------------------------------------
+// Coding Challenge #2
+
+/* 
+This is more of a thinking challenge than a coding challenge 🤓
+
+Take the IIFE below and at the end of the function, attach an event listener that changes the color of the selected h1 element ('header') to blue, each time the BODY element is clicked. Do NOT select the h1 element again!
+
+And now explain to YOURSELF (or someone around you) WHY this worked! Take all the time you need. Think about WHEN exactly the callback function is executed, and what that means for the variables involved in this example.
+
+GOOD LUCK 😀
+*/
+
+// SKIPPED THIS CHALLENGE .. AS IT IS PROVIDING A CONSTANT ERROR OF "Uncaught TypeError: {(intermediate value)} is not a function"
+
 
