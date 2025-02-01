@@ -122,7 +122,7 @@ const restaurant = new Map() // syn
 
 restaurant.set('name', 'quant pizzas') // key of type: string
 
-// set can take any type of value for keys .. ex: if restaurant has two branches in same locations
+// .set can take any type of value for keys .. ex: if restaurant has two branches in same locations
 restaurant.set(1, 'abc street, vzm')
 restaurant.set(2, 'xyz street, vzm')
 
