@@ -128,6 +128,41 @@ const calcDisBalance = (movements) => {
 calcDisBalance(account1.movements)
 
 
+// 4. Calculate and Display the Summary
+// ---
+const calcDisplaySummary = (movements) => {
+
+  const incomes = movements.filter((mov) => {
+    return mov > 0
+  }).reduce((acc, inc) => {
+    return acc + inc
+  }, 0)
+  labelSumIn.textContent = `${incomes}€`
+
+  const out = movements.filter((mov) => {
+    return mov < 0
+  }).reduce((acc, out) => {
+    return acc + out
+  }, 0)
+  labelSumOut.textContent = `${Math.abs(out)}€`
+
+  const interest = movements.filter((mov) => {
+    return mov > 0;
+  }).map((deposit) => {
+    return (deposit * 1.2) / 100 // 1.2% interest rate
+  })
+  // new rule: if the interest is greater than or equal to 1, then only we will add that interest to the summary
+  .filter((int, ind, arr) => {
+    // console.log(arr)
+    return int >= 1;
+  })
+  .reduce((acc, int) => {
+    return acc + int;
+  })
+  labelSumInterest.textContent = `${interest}€`
+}
+calcDisplaySummary(account1.movements)
+
 // ------------------------------------------------------------------------------------------------------------------------------------
 // LECTURES
 
@@ -430,3 +465,98 @@ const max = movements3.reduce ((acc, cur, ind) => {
 }, movements3[0])
 // console.log(max)
 
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// Coding Challenge #2
+
+/* 
+Let's go back to Julia and Kate's study about dogs. This time, they want to convert dog ages to human ages and 
+calculate the average age of the dogs in their study.
+
+Create a function 'calcAverageHumanAge', which accepts an arrays of dog's ages ('ages'), and does the following things in order:
+
+1. Calculate the dog age in human years using the following formula: 
+  - if the dog is <= 2 years old, humanAge = 2 * dogAge. 
+  - If the dog is > 2 years old, humanAge = 16 + dogAge * 4.
+2. Exclude all dogs that are less than 18 human years old (which is the same as keeping dogs that are at least 18 years old)
+3. Calculate the average human age of all adult dogs (you should already know from other challenges how we calculate averages 😉)
+4. Run the function for both test datasets
+
+TEST DATA 1: [5, 2, 4, 1, 15, 8, 3]
+TEST DATA 2: [16, 6, 10, 5, 6, 1, 4]
+
+GOOD LUCK 😀
+*/
+
+const calcAverageHumanAge = (ages) => {
+  
+  const humanAges = ages.map((humanAge) => {
+    return (humanAge <= 2 ? 2 * humanAge : 16 + (4 * humanAge))
+  })
+  const adultAges = humanAges.filter((humanAge) => {
+    return humanAge > 18
+  })
+  const avg = adultAges.reduce((acc, cur, ind, arr) => {
+    return (acc + cur)
+  }, 0) / arr.length
+  return avg
+}
+
+const avg1 = calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3])
+const avg2 = calcAverageHumanAge([16, 6, 10, 5, 6, 1, 4])
+// console.log(avg1, avg2)
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 9. Chaining Methods
+
+// chaining methods is a powerful feature of higher order functions in JS and it is used to chain multiple methods together
+// ---
+const movements4 = [200, 450, -400, 3000, -650, -130, 70, 1300];
+const rupToUsd1 = 1.1; 
+
+const totalDepositsUSD = movements4
+.filter((mov) => {
+  return mov > 0
+})
+.map((mov) => {
+  return mov * rupToUsd1
+})
+.reduce((acc, curMov) => {
+  return acc + curMov
+}, 0)
+// console.log(totalDepositsUSD)
+
+// NOTE:
+// 1. chaining methods is a great way to write clean and readable code but chaining too many methods can raise performance issues
+// 2. Bad Practice: to chain methods that mutate the original array (like splice, reverse, etc.) --- avoid mutating arrays
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// Coding Challenge #3
+
+/* 
+Rewrite the 'calcAverageHumanAge' function from the previous challenge, but this time as an arrow function, and using chaining!
+
+TEST DATA 1: [5, 2, 4, 1, 15, 8, 3]
+TEST DATA 2: [16, 6, 10, 5, 6, 1, 4]
+
+GOOD LUCK 😀
+*/
+// already done ...
+
+const calcAverageHumanAge1 = (ages) => {
+  
+  const humanAges = ages.map((humanAge) => {
+    return (humanAge <= 2 ? 2 * humanAge : 16 + (4 * humanAge))
+  }).filter((humanAge) => {
+    return humanAge > 18
+  }).reduce((acc, cur, ind, arr) => {
+    return (acc + cur / arr.length)
+  }, 0) 
+  return humanAges
+}
+
+const avg11 = calcAverageHumanAge1([5, 2, 4, 1, 15, 8, 3])
+const avg22 = calcAverageHumanAge1([16, 6, 10, 5, 6, 1, 4])
+// console.log(avg11, avg22)
