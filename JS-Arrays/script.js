@@ -80,6 +80,54 @@ const displayMovements = function (movements) {
 };
 displayMovements(account1.movements);
 
+
+// 2. Creating UserNames
+// ---
+
+// ex:
+// --- single_user
+// const account1 = {
+//   owner: "Jonas Schmedtmann",
+//   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+//   interestRate: 1.2, // %
+//   pin: 1111,
+// };
+
+// --- accounts_array
+// const accounts = [account1, account2, account3, account4];
+
+const createUsernames = function (accs) {
+  accs.forEach ((acc) => {
+    acc.username = acc.owner
+      .toLowerCase()
+      .split(" ")
+      .map((part) => {
+        return part[0]
+      }).join('')
+  })
+}
+createUsernames(accounts)
+
+
+// 3. Calculate and Display the Balance
+// ---
+
+// const account1 = {
+//   owner: "Jonas Schmedtmann",
+//   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+//   interestRate: 1.2, // %
+//   pin: 1111,
+// };
+
+const calcDisBalance = (movements) => {
+  const balance = movements.reduce ((acc, mov) => {
+    return acc + mov;
+  }, 0)
+  labelBalance.textContent = `${balance} EUR`
+}
+calcDisBalance(account1.movements)
+
+
 // ------------------------------------------------------------------------------------------------------------------------------------
 // LECTURES
 
@@ -254,4 +302,131 @@ TEST DATA 2: Julia's data [9, 16, 6, 8, 3], Kate's data [10, 5, 6, 1, 4]
 
 GOOD LUCK 😀
 */
+
+const checkDogs = (dogsJulia, dogsKate) => {
+
+  let newDogsJulia = dogsJulia.slice();
+  
+  newDogsJulia.splice(0, 1)
+  newDogsJulia.splice(-2)
+
+  const dogs = [...newDogsJulia, ...dogsKate]; // we can use ".concat()" method also on 2 arrays
+
+  dogs.forEach((dogsAge, i) => {
+    if (dogsAge >= 3) {
+      console.log(`Dog number ${i + 1} is an adult, and is ${dogsAge} years old`);
+    } else {
+      console.log(`Dog number ${i + 1} is still a puppy 🐶`);
+    }
+  })
+}
+// checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3])
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 5. Data Transformation: Map, Filter and Reduce
+
+// MAP
+// MAP is similar to forEach method but the main difference is that MAP creates a new array based on the original array
+// performs some operation on each element of the original array and then returns a new array with the results of those operations
+// ---
+
+// FILTER
+// Filters the elements on a certain condition and prepares a new array with the elements that satisfy that condition and returns that new array
+// ---
+
+// REDUCE
+// reduce is used to reduces or accumulates all the elements of the array into a single value 
+// (eg: sum of all elements into a value, average of all elements, etc.)
+// REDUCE has an accumulator and the current element and this keeps adding the current element to the accumulator
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 6. The map Method
+
+const movements1 = [200, 450, -400, 3000, -650, -130, 70, 1300];
+const rupToUsd = 0.012;
+
+// using map method
+const movementsUSD = movements1.map((movement) => { // using functional programming which creates a new array 
+  return movement * rupToUsd;
+})
+// console.log(movementsUSD)
+
+// using for-of method
+const movementsUSDfor = [];
+for(const movement of movements1) {
+  movementsUSDfor.push(movement * rupToUsd) // manually creating a new array while looping through the original array
+}
+// console.log(movementsUSDfor)
+
+// with map method also we have three arguments like forEach method that are: current element, current index and the entire array
+// ---
+const movementsDescriptions = movements1.map((movement, i, arr) => {
+  
+  if (movement > 0) {
+    return `Movement ${i + 1}: You deposited ${(movement)}`
+  }
+  else {
+    return `Movement ${i + 1}: You withdrew ${Math.abs(movement)}`
+  }
+  // or we can use ternary operator
+  // return `Movement ${i + 1}: You ${movement > 0 ? "deposited" : "withdrew"} ${Math.abs(movement)}`;
+})
+// console.log(movementsDescriptions)
+
+// Note: 
+// each of the element is logged to the console after every operation while using for method, this is called "side effects"
+// but with map every string is added into a new array and logged to the console at once 
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 7. The filter Method
+
+// filter method is used to filter the elements of an array based on a certain condition .. and it returns a new array with the elements that satisfy that condition
+// ---
+const movements2 = [200, 450, -400, 3000, -650, -130, 70, 1300];
+const depositsOnly = movements2.filter ((mov) => {
+  if (mov > 0){
+    return mov;
+  }
+})
+// console.log(depositsOnly)
+
+// make an array similarly for withdrawals ..
+
+// NOTE:
+// advantages of using these higher order functions like map, filter, reduce in JS is that .. 
+// we can chain different methods together (with string and array methods together and separately also) .. 
+// this cannot be achieved with for, forEach and for-of looping ..
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 8. The reduce Method
+
+// reduce method is used to reduce or accumulate all the elements of an array into a single value 
+//  - (ex: adding up all the elements of an array into a value.)
+// reduce method has an accumulator and the current element and this keeps adding the current element to the accumulator
+// ---
+// reduce method has two arguments: the callback fn. and the initial value of the accumulator
+// the callback fn. has four arguments: accumulator, current element, current index and the entire array
+// ---
+const movements3 = [200, 450, -400, 3000, -650, -130, 70, 1300];
+const totalBal = movements3.reduce((acc, cur, ind, arr) => {
+  return acc + cur
+}, 0)
+// console.log(totalBal)
+
+// with reduce method we can do more stuff not only simple additions and multiplications etc.,
+// in the below example, we are trying to get the largest element from an array ..
+// ---
+const max = movements3.reduce ((acc, cur, ind) => {
+  if (acc > cur) {
+    return acc
+  }
+  else {
+    return cur
+  }
+}, movements3[0])
+// console.log(max)
 

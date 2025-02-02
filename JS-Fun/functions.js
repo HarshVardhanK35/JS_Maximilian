@@ -115,12 +115,14 @@ const transformer = function (str, fn) {
 
 // - calls them later! transformer is a higher-order function that accepts a callback function as an argument (that's upperFirstWord and oneWord)
 
-// simpler example:
+// simpler example - 1:
 const high5 = function () {
     console.log('👋')
 }
-
 // document.body.addEventListener('click', high5) // used in-built function (addEventListener) 
+
+// simpler example - 2: 
+// user fruit-processing function 
 
 // another in-built function calling high5: 
 // ['Jonas', 'Martha', 'Adam'].forEach(high5) // high5 is a callback function here
