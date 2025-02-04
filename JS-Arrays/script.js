@@ -78,7 +78,6 @@ const displayMovements = function (movements) {
     containerMovements.insertAdjacentHTML("afterbegin", html);
   });
 };
-displayMovements(account1.movements);
 
 
 // 2. Creating UserNames
@@ -119,37 +118,37 @@ createUsernames(accounts)
 //   pin: 1111,
 // };
 
-const calcDisBalance = (movements) => {
-  const balance = movements.reduce ((acc, mov) => {
+const calcDisBalance = (acc) => {
+  const balance = acc.movements.reduce ((acc, mov) => {
     return acc + mov;
   }, 0)
-  labelBalance.textContent = `${balance} EUR`
+  acc.balance = balance
+  labelBalance.textContent = `${acc.balance} EUR`
 }
-calcDisBalance(account1.movements)
 
 
 // 4. Calculate and Display the Summary
 // ---
-const calcDisplaySummary = (movements) => {
+const calcDisplaySummary = (acc) => {
 
-  const incomes = movements.filter((mov) => {
+  const incomes = acc.movements.filter((mov) => {
     return mov > 0
   }).reduce((acc, inc) => {
     return acc + inc
   }, 0)
   labelSumIn.textContent = `${incomes}€`
 
-  const out = movements.filter((mov) => {
+  const out = acc.movements.filter((mov) => {
     return mov < 0
   }).reduce((acc, out) => {
     return acc + out
   }, 0)
   labelSumOut.textContent = `${Math.abs(out)}€`
 
-  const interest = movements.filter((mov) => {
+  const interest = acc.movements.filter((mov) => {
     return mov > 0;
   }).map((deposit) => {
-    return (deposit * 1.2) / 100 // 1.2% interest rate
+    return (deposit * acc.interestRate) / 100 // 1.2% interest rate
   })
   // new rule: if the interest is greater than or equal to 1, then only we will add that interest to the summary
   .filter((int, ind, arr) => {
@@ -161,7 +160,122 @@ const calcDisplaySummary = (movements) => {
   })
   labelSumInterest.textContent = `${interest}€`
 }
-calcDisplaySummary(account1.movements)
+
+// Bonus: Update the UI
+const updateUI = (acc) => {
+  // display current balance
+  calcDisBalance(acc)
+
+  // display summary
+  calcDisplaySummary(acc)
+
+  // display movements
+  displayMovements(acc.movements)
+}
+
+// 5. Implementing Login
+// ---
+let currentAccount;
+btnLogin.addEventListener('click', (e) => {
+  
+  // prevent form from submitting...
+  e.preventDefault()
+
+  // find the account with login account username
+  currentAccount = accounts.find((acc) => {
+    return acc.username === inputLoginUsername.value.toLowerCase().trim()
+  })
+  // console.log(currentAccount)
+
+  // check the pin associated with curr.acc and the pin entered
+  if(currentAccount?.pin === +inputLoginPin.value){
+
+    // emptying form fields
+    inputLoginUsername.value = inputLoginPin.value = ''
+    inputLoginPin.blur() // to remove focus
+
+    // display UI and welcome message 
+    labelWelcome.textContent = `Welcome, ${currentAccount.owner.split(' ')[0]}!`
+    containerApp.style.opacity = 1;
+
+    // Update the UI 
+    updateUI(currentAccount)
+
+    // console.log(currentAccount)
+  }
+})
+
+
+// 6. Implementing Transfers
+// --- 
+btnTransfer.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  const amount = +(inputTransferAmount.value)
+  const receiverAcc = accounts.find((acc) => {
+    return acc.username === inputTransferTo.value
+  })
+  // console.log(amount, receiverAcc)
+
+  // currentAccount variable is defined inside implementation of login
+  // check that receiver's username and currentAccount holder username are not equal (we can use optional chaining for this ?.)
+  // check that amount greater than 0 and currentAcc balance must be greater than amount that has to transferred
+  if(amount > 0 && receiverAcc && currentAccount.balance >= amount && receiverAcc?.username !== currentAccount.username) {     
+
+    // operating with transfers
+    currentAccount.movements.push(-amount)
+    receiverAcc.movements.push(amount)
+
+    // Update The UI
+    updateUI(currentAccount)
+  }
+  // clean the input fields
+  inputTransferAmount.value = inputTransferTo.value = ''
+  inputTransferAmount.blur()
+})
+
+// 8. Loan Request
+// ---
+btnLoan.addEventListener('click', (e) => {
+  e.preventDefault()
+
+  // rule: to avail loan amt., there must be one deposit with at least 10% of requested loan amt
+  const amount = +inputLoanAmount.value
+
+  if(amount > 0 && currentAccount.movements.some((mov) => {
+  return (mov >= (0.1 * amount))
+  })) {
+    
+    // add amount to the user movements
+    currentAccount.movements.push(amount)
+
+    // update UI
+    updateUI(currentAccount)
+  }
+  // clear the input fields
+  inputLoanAmount.value = ''
+  inputLoanAmount.blur()
+})
+
+// 7. Delete an account 
+// --- 
+btnClose.addEventListener('click', (e) => {
+  e.preventDefault()
+
+  if(inputCloseUsername.value.toLowerCase().trim() === currentAccount.username && +inputClosePin.value === currentAccount.pin) {
+    // console.log("closed")
+
+    const index = accounts.findIndex((acc) => {
+      return acc.username === currentAccount.username
+    })
+
+    // delete the account
+    accounts.splice(index, 1)
+
+    // hide UI
+    containerApp.style.opacity = 0;
+  }
+})
 
 // ------------------------------------------------------------------------------------------------------------------------------------
 // LECTURES
@@ -189,6 +303,9 @@ let arr = ["a", "b", "c", "d", "e"];
 
 // SPLICE
 // splice method does mutate the original array and returns the removed elements
+// ---
+// console.log(arr.splice(0, 1))
+// console.log(arr)
 // ---
 // console.log(arr.splice(2)); // ["c", "d", "e"]
 // arr.splice(-1); // ["a", "b", "c", "d"]
@@ -560,3 +677,288 @@ const calcAverageHumanAge1 = (ages) => {
 const avg11 = calcAverageHumanAge1([5, 2, 4, 1, 15, 8, 3])
 const avg22 = calcAverageHumanAge1([16, 6, 10, 5, 6, 1, 4])
 // console.log(avg11, avg22)
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 10. The find Method
+
+// find method is used to find the first element in the array that satisfies a certain condition and returns that element .. it requires a boolean condition
+// ---
+const movements5 = [200, 450, -400, 3000, -650, -130, 70, 1300];
+const firstWithdrawal = movements5.find((mov) => {
+  return mov < 0
+})
+// console.log(firstWithdrawal)
+
+// using find method
+const account = accounts.find((acc) => {
+  return acc.owner === "Jessica Davis"
+})
+// console.log(account)
+
+// using for-of method
+for (const account of accounts) {
+  if (account.owner === "Jessica Davis") {
+    // console.log(account)
+  }
+}
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 11. Implementing Login
+
+// The default behavior of submit in form of a HTML doc is to reload the page and we can prevent that by using "e.preventDefault()" method 
+// btnLogin.addEventListener('click', (e) => {
+//   e.preventDefault()
+//   console.log('Login')
+// })
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 12. FindIndex Method
+
+// findIndex returns the index of the found element not the element like find method
+// similar to find.. findIndex has access to current index and current array
+// ---
+// as an example and explanation of syntax, I have demonstrated the application fo findIndex() by deleting the account of the user
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 13. The findLast and findLastIndex methods
+
+// these methods start searching from the last index {findLast: "searches for element"; findLastIndex: "searches for last index"} 
+// both are similar to find and findIndex...
+// ---
+// ex: 
+const movements6 = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+// findLast
+const lastElement = movements6.findLast((mov) => {
+  return (mov < 0)
+})
+// console.log(lastElement)
+
+// use-case: "Your latest large movement was X moments ago"  // -> this searches from the last occurred transactions 
+
+// findLastIndex -> largeMovementIndex that is greater than 1000
+const largeMovementIndex = movements6.findLastIndex((mov) => {
+  return (Math.abs(mov) > 1000)
+})
+// console.log(`The latest large movement was ${movements.length - largeMovementIndex} moments ago`)
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 14. Some and Every
+
+// SOME: 
+// similar to includes method ".includes()" -> returns 'true' if the passed element is there inside an array and -1 if not
+// includes returns true only passed arg is exactly equal and present in the given array -> "testing for equality"
+// ---
+// but SOME takes a cb fn. -> test for a condition instead
+// ---
+// to check any deposits, we check for positive movements in the array (greater than 0) .. as for equality '===' we can use "includes"
+// ---
+
+const anyDeposits = movements6.some((mov) => {
+  return mov > 0
+})
+
+// Note:
+// a real-time application was implemented back in the BANKIST application (at requesting loan section)
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// EVERY:
+// true is returned, if all elements in the array satisfies a condition .. 
+// so to check whether an account has all positive movements that is all are deposits ..
+
+const hasDeposits = account4.movements.every((mov) => {
+  return (mov > 0)
+})
+// console.log(hasDeposits)
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// 15. Flat and flatMap:
+
+// FLAT:
+// if there are nested arrays, ex: [[[1, 2, 3], 4, 5], [6, 7, [8, 9]], [11, 21]]
+// the flat method.. flattens the array into single array without any nested arrays
+// flat always works by "1" level 'default' but we can 'specify the level by passing the args'
+// ---
+
+const arr1 = [[1, 2, 3], 4, 5, [6, 7 ]]   // level-1 of nesting
+// console.log(arr1.flat())  // (7) [1, 2, 3, 4, 5, 6, 7]
+
+const arrDeep = [ [ [1, 2] , 3, 4], [5, [6, 7, 8] ] ]  // level-2 of nesting
+// console.log(arrDeep.flat(2))     // (8) [1, 2, 3, 4, 5, 6, 7, 8]
+
+// without chaining
+// const accountMovements = accounts.map((acc) => {
+//   return acc.movements
+// })
+// const allMovements = accountMovements.flat()
+// console.log(allMovements)
+
+// const sumOfMovements = allMovements.reduce((acc, mov) => {
+//   return acc + mov
+// }, 0)
+// console.log(sumOfMovements)
+
+// with chaining of methods
+const totalOfAccMovements = accounts
+.map((acc) => {
+  return acc.movements
+}).flat()
+.reduce((acc, mov) => {
+  return acc + mov
+}, 0)
+// console.log(totalOfAccMovements)
+
+// FLATMAP:
+// if there is a use of map 1st and flat at second, we use flatMap() method to replace both usage of map() and flat()
+// ---
+// .map((acc) => {
+//   return acc.movements     // replaced with flatMap()
+// }).flat()
+// ---
+// flatMap() just goes 1 level deep.. if we want to go deep than 1 we can use 'flat' and 'map' separately
+
+const totalOfAccMovements1 = accounts
+.flatMap((accMov) => {return accMov.movements})
+.reduce((acc, mov) => {
+  return acc + mov
+}, 0)
+// console.log(totalOfAccMovements1)
+
+
+// ------------------------------------------------------------------------------------------------------------------------------------
+// Coding Challenge #4
+/*
+This time, Julia and Kate are studying the activity levels of different dog breeds.
+
+YOUR TASKS:
+1. Store the the average weight of a "Husky" in a variable "huskyWeight"
+2. Find the name of the only breed that likes both "running" and "fetch" ("dogBothActivities" variable)
+3. Create an array "allActivities" of all the activities of all the dog breeds
+4. Create an array "uniqueActivities" that contains only the unique activities (no activity repetitions). 
+  - HINT: Use a technique with a special data structure that we studied a few sections ago.
+5. Many dog breeds like to swim. What other activities do these dogs like? 
+  - Store all the OTHER activities these breeds like to do, in a unique array called "swimmingAdjacent".
+6. Do all the breeds have an average weight of 10kg or more? Log to the console whether "true" or "false".
+7. Are there any breeds that are "active"? "Active" means that the dog has 3 or more activities. Log to the console whether "true" or "false".
+
+BONUS: What's the average weight of the heaviest breed that likes to fetch? HINT: Use the "Math.max" method along with the ... operator.
+*/
+
+// TEST DATA:
+// ---
+const breeds = [
+  {
+    breed: 'German Shepherd',
+    averageWeight: 32,
+    activities: ['fetch', 'swimming'],
+  },
+  {
+    breed: 'Dalmatian',
+    averageWeight: 24,
+    activities: ['running', 'fetch', 'agility'],
+  },
+  {
+    breed: 'Labrador',
+    averageWeight: 28,
+    activities: ['swimming', 'fetch'],
+  },
+  {
+    breed: 'Beagle',
+    averageWeight: 12,
+    activities: ['digging', 'fetch'],
+  },
+  {
+    breed: 'Husky',
+    averageWeight: 26,
+    activities: ['running', 'agility', 'swimming'],
+  },
+  {
+    breed: 'Bulldog',
+    averageWeight: 36,
+    activities: ['sleeping'],
+  },
+  {
+    breed: 'Poodle',
+    averageWeight: 18,
+    activities: ['agility', 'fetch'],
+  },
+];
+
+// 1. Store the the average weight of a "Husky" in a variable "huskyWeight"
+// ---
+const huskyWeight = breeds.find((breed) => {
+  return breed.breed === "Husky"
+}).averageWeight
+// console.log(huskyWeight)
+
+// 2. Find the name of the only breed that likes both "running" and "fetch" ("dogBothActivities" variable)
+// ---
+const dogBothActivities = breeds.find((breed) => {
+  return breed.activities.includes("running") && breed.activities.includes("fetch")
+}).breed
+// console.log(dogBothActivities)
+
+// 3. Create an array "allActivities" of all the activities of all the dog breeds
+// ---
+// using map() and flat() separately
+const allActivities = breeds.map((breed) => {
+  return breed.activities
+}).flat()
+// console.log(allActivities)
+
+// using flatMap() 
+const allActivities1 = breeds.flatMap((breed) => {
+  return breed.activities
+})
+// console.log(allActivities1)
+
+// 4. Create an array "uniqueActivities" that contains only the unique activities (no activity repetitions).
+// --- a set to make unique
+const setOfAllActivities = [...new Set(allActivities)]
+// console.log(setOfAllActivities)
+
+// 5. Many dog breeds like to swim. What other activities do these dogs like? 
+// Store all the OTHER activities these breeds like to do, in a unique array called "swimmingAdjacent".
+// ---
+const breedsIncludeSwimming = breeds
+.filter((breed) => {
+  return breed.activities.includes("swimming")
+})
+.flatMap((breedsActivities) => {
+  return breedsActivities.activities
+})
+const swimmingAdjacent = [... new Set(breedsIncludeSwimming.filter((activities) => {
+  return (activities !== 'swimming')
+}))]
+// console.log(swimmingAdjacent)
+
+// 6. Do all the breeds have an average weight of 10kg or more? Log to the console whether "true" or "false".
+// ---
+const breedsWithWeightAbove10 = (breeds.every((breed) => {
+  return breed.averageWeight >= 10
+}))
+// console.log(breedsWithWeightAbove10)
+
+// 7. Are there any breeds that are "active"? "Active" means that the dog has 3 or more activities. Log to the console whether "true" or "false".
+// ---
+const activeBreeds = (breeds.some((breed) => {
+  return breed.activities.length >= 3
+}))
+// console.log(activeBreeds)
+
+// BONUS: What's the average weight of the heaviest breed that likes to fetch? HINT: Use the "Math.max" method along with the ... operator.
+// ---
+const breedsWeightsLikeFetch = breeds.filter((breed) => {
+  return breed.activities.includes("fetch")
+}).map((breed) => {
+  return breed.averageWeight
+})
+const heaviestBreedsLikeToFetch = Math.max(...breedsWeightsLikeFetch)
+// console.log(heaviestBreedsLikeToFetch)
