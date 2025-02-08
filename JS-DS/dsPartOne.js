@@ -12,7 +12,8 @@ const restaurant = {
     return (`Order: ${this.starters[startIndex]} and ${this.main[mainIndex]}`)
   }
 }
-// console.log(restaurant.orderFood ?. (1, 0) ?? "Method does not exist")
+// console.log(restaurant.order ?. (1, 0) ?? "Method does not exist") // Order: mushroom-65 and Paneer pulao
+// console.log(restaurant.orderFood ?. (1, 0) ?? "Method does not exist") // Method does not exist
 
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -71,30 +72,7 @@ Suppose we get data from a web service about a certain game (below).
 
 TEST DATA FOR 6: Use players 'Davies', 'Muller', 'Lewandowski' and 'Kimmich'.
   - Then, call the function again with players from game.scored
-
-# CHALLENGE - 2:
-Let's continue with our football betting app!
-
-1. Loop over the game.scored array and print each player name to the console,
-  - along with the goal number (Example: "Goal 1: Lewandowski")
-2. Use a loop to calculate the average odd and log it to the console
-  - (We already studied how to calculate averages, you can go check if you don't remember)
-3. Print the 3 odds to the console, but in a nice formatted way, exactly like this:
-      Odd of victory Bayern Munich: 1.33
-      Odd of draw: 3.25
-      Odd of victory Borrussia Dortmund: 6.5
-Get the team names directly from the game object, don't hardcode them (except for "draw").
-  - HINT: Note how the odds and the game objects have the same property names 😉
-
-BONUS: Create an object called 'scores' which contains the names of the players who scored as properties,
-  - and the number of goals as the value. In this game, it will look like this:
-      {
-        Gnarby: 1,
-        Hummels: 1,
-        Lewandowski: 2
-      }
 */
-
 const game = {
   team1: 'Bayern Munich',
   team2: 'Borrussia Dortmund',
@@ -147,9 +125,9 @@ const [tOneGK, ...tOneFieldPlayers] = players1
 const [tTwoGK, ...tTwoFieldPlayers] = players2
 
 // 3. "rest pattern" - create an array 'allPlayers' and must contain all 22 players
-// const [...allPlayers] = [...players1, ...players2]
+const [...allPlayers] = [...players1, ...players2]
 // or
-const allPlayers = [...players1, ...players2]
+const allPlayers1 = [...players1, ...players2]
 
 // 4. spread op - must contain additional three substitute players with main team
 const player1Final = [...tOneFieldPlayers, 'Thiago', 'Couti', 'Peris' ];
@@ -166,7 +144,32 @@ const printGoals = function (...players) {
 // printGoals (...game.scored);
 
 // ------------------------------------------------------------------------------------------------------------------
-// # CHALLENGE - 2:
+/**
+# CHALLENGE - 2:
+
+Let's continue with our football betting app!
+
+1. Loop over the game.scored array and print each player name to the console,
+  - along with the goal number (Example: "Goal 1: Lewandowski")
+2. Use a loop to calculate the average odd and log it to the console
+  - (We already studied how to calculate averages, you can go check if you don't remember)
+3. Print the 3 odds to the console, but in a nice formatted way, exactly like this:
+      Odd of victory Bayern Munich: 1.33
+      Odd of draw: 3.25
+      Odd of victory Borrussia Dortmund: 6.5
+Get the team names directly from the game object, don't hardcode them (except for "draw").
+  - HINT: Note how the odds and the game objects have the same property names 😉
+
+BONUS: Create an object called 'scores' which contains the names of the players who scored as properties,
+  - and the number of goals as the value. In this game, it will look like this:
+      {
+        Gnarby: 1,
+        Hummels: 1,
+        Lewandowski: 2
+      }
+ * 
+ */
+
 
 // 1. looping through an array
 const playerScores = game.scored
@@ -181,7 +184,7 @@ const odds = Object.values(game.odds)
 let average = 0;
 let oddsArr = [];
 for (const oddValue of odds) {
-  // console.log(odd) // returns: [team- name: odd- value] // so destructure the complete array [x, y] = [1, 2]
+  // console.log(oddValue) // returns: [team- name: odd- value] // so destructure the complete array [x, y] = [1, 2]
   average = average + oddValue
   oddsArr.push(oddValue)
 }
@@ -200,4 +203,3 @@ for (const player of game.scored) {
 }
 game.scores = scores
 // console.log(game)
-

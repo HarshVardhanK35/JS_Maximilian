@@ -1,10 +1,10 @@
 /**
  * --- SETS
- * ------- syn: new Set( type: iterable )
+ * ------- syn: new Set(type: iterable) -> takes in an iterable as an argument
  * collection of unique values .. no duplicates and can have mixed of data types .. order is irrelevant
  * new Set () ... takes in an "iterable" ... commonly an array is passed !!!
  * as strings are also iterables ('johannes') .. they can also be passed .. but they are splitted into an array of characters !
- *    - Set(5) {'j', 'o', 'n', 'a', 'e', 's'}
+ *    - Set(5) {'j', 'o', 'h', 'n', 'a', 'e', 's'}
  * sets has no indices and there is no way of getting values out of the set using it's index.
  *
  * methods on sets:
@@ -29,17 +29,30 @@ const set = new Set(arr)
 // console.log(set) // re: Set(4) {1, 2, 3, 4}
 
 // Methods on Sets { .size, .add(), .delete() }
+// ---
 
-// .size
+// 1. size: property: 
+// returns the number of elements that are present in the set
 // there is nothing that .size expects .. so no arg shall be passed!
 // returns the actual size of the set : neglecting the duplicates
 
-// console.log(new Set( ['Jonas', 'Max', 'Colt', 'Mead'] ) .size)
+// console.log(new Set( ['Jonas', 'Max', 'Colt', 'Mead'] ) .size) // re: 4
 
-// console.log(set.delete(5)) // re: false "if passed element is not there"
+// 2. has: method
+// checks whether the passed arg is present in the set or not
+// returns a boolean value: true or false
+// console.log(set.has('Udemy')) // re: true
 
+// 3. add: method
+// adds a value to the set
+// console.log(set.add('JavaScript')) // re: Set(5) {'jonas', 'Udemy', 'teaching', 'JavaScript'}
 
-// looping
+// 4. delete: method
+// deletes a value from the set
+// console.log(set.delete('Udemy')) // re: true
+// console.log(set.delete(5)) // re: false "if passed element is not there" in the set
+
+// looping in sets
 for (const ele of arr) {
   // console.log(ele)
 }
@@ -55,11 +68,16 @@ const newSet = new Set([...arr])
  * new methods that were introduced in new era of JS .. (ES-2025)
  *
  * .intersection: (returns a set with the common elements from two sets)
- *    - syn: set1.intersection(set2)
+ *   - syn: set1.intersection(set2) // returns a set with the common elements from two sets
+ * 
  * .union: (returns a set of elements not the common ones .. removes the duplicates from two sets)
+ *  - syn: set1.union(set2) // returns a set of elements not the common ones .. removes the duplicates from two sets
+ * 
  * .difference: returns the unique elements from 1st array 
+ * - syn: set1.difference(set2) // returns the unique elements from 1st array
+ * 
  * .symmetricDifference: returns the unique elements from both the arrays.. opposite of intersection
- *
+ * - syn: set1.symmetricDifference(set2) // returns the unique elements from both the arrays
  */
 
 const italianFoods = new Set([
@@ -105,7 +123,8 @@ const symmetricDiffFoods = italianFoods.symmetricDifference(mexicanFoods)
  * --- MAPS
  * -------
  * Maps are DS where we can map values to keys
- *  - just like objects, data is stored in key value pairs
+ * - just like objects, data is stored in key value pairs
+ * - but in maps, we can have any type of keys and not just strings as in objects
  * 
  * Diff. between Maps and Objects is: we can have only strings as keys but in maps we can have any type for keys
  * 
@@ -114,44 +133,46 @@ const symmetricDiffFoods = italianFoods.symmetricDifference(mexicanFoods)
  * to read values, we use .get() method
  * 
  * .has() // checks whether the passed arg is present in the map or not .. returns true or false
+ * .set() // adds a key-value pair to the map
+ * .get() // returns the value on passing the correct key value with correct data type
  * .delete() // passed arg ... will be a key and assigning values will also be deleted from the map
  * .size // a property, that returns the actual size or the number of key-value pairs that are present in the map
  */
 
-const restaurant = new Map() // syn
+const restaurant1 = new Map() // syn
 
-restaurant.set('name', 'quant pizzas') // key of type: string
+restaurant1.set('name', 'quant pizzas') // key of type: string
 
-// .set can take any type of value for keys .. ex: if restaurant has two branches in same locations
-restaurant.set(1, 'abc street, vzm')
-restaurant.set(2, 'xyz street, vzm')
+// .set can take any type of value for keys1 .. ex: if restaurant1 has two branches in same locations
+restaurant1.set(1, 'abc street, vzm')
+restaurant1.set(2, 'xyz street, vzm')
 
 // .set not only sets a key-value pair on to a map but also returns the complete map on logging it to the console!
-// console.log(restaurant.set())
+// console.log(restaurant1.set())
 
 // .get() method... returns the values on passing correct key value with correct data type
 // here the data type is important, we will get correct output only when 1 is used instead of '1' otherwise we get undefined
 
-// console.log(restaurant.get('name'))
-// console.log(restaurant.get(1)) 
+// console.log(restaurant1.get('name'))
+// console.log(restaurant1.get(1)) 
 
 // --- use-case (1)
-restaurant.set('open', 5)
-restaurant.set('close', 22) // ... setting opening and closing hours of rest.
+restaurant1.set('open', 5)
+restaurant1.set('close', 22) // ... setting opening and closing hours of rest.
 
-restaurant.set(true, 'we are open')
-restaurant.set(false, 'we are close') // ... works based on the condition either true or false
+restaurant1.set(true, 'we are open')
+restaurant1.set(false, 'we are close') // ... works based on the condition either true or false
 
 const checkInTime = 24;
-// console.log(restaurant.get( checkInTime > restaurant.get('open') && checkInTime < restaurant.get('close')))
+// console.log(restaurant1.get( checkInTime > restaurant1.get('open') && checkInTime < restaurant1.get('close')))
 
 // --- use-case (2)
-// restaurant.set([1, 2], 'arrays') and restaurant.get([1, 2]) are not same .. [1, 2] has different reference points
+// restaurant1.set([1, 2], 'arrays') and restaurant1.get([1, 2]) are not same .. [1, 2] has different reference points
 // these two arrays in 'set' and 'get' reference to different addresses
 // so, create an array constant and use that instead (because array constant refers to same address)
 const arr0 = [1, 2]
-restaurant.set(arr0, 'array things')
-// console.log(restaurant.get(arr0))
+restaurant1.set(arr0, 'array things')
+// console.log(restaurant1.get(arr0))
 
 /**
  * --- Maps - Part (2)
@@ -161,7 +182,7 @@ restaurant.set(arr0, 'array things')
  * 3. conversion of map to an array
  */
 
-const restaurant1 = {
+const restaurant11 = {
   name: 'classico italiano',
   location: 'via angelo Tavanti, Firenze',
   categories: ['italian', 'pizzeria', 'vegetarian', 'organic'],
@@ -175,8 +196,8 @@ const restaurant1 = {
 }
 
 // --- conversion of object to map
-// console.log(restaurant1.openingHrs)
-const convertedMap = new Map(Object.entries(restaurant1.openingHrs))
+// console.log(restaurant11.openingHrs)
+const convertedMap = new Map(Object.entries(restaurant11.openingHrs))
 // console.log(convertedMap)
 
 // --- A Map
@@ -190,13 +211,31 @@ const question = new Map([
   [false, 'Try again!']
 ]) 
 
+// console.log(question);
+// ---
+// Output:
+// Map(7) {
+//   'question' => 'what is the best language?',
+//   1 => 'JavaScript',
+//   2 => 'Python',
+//   3 => 'Java',
+//   'correct' => 1,
+//   true => 'Correct!',
+//   false => 'Try again!'
+// }
+
 // --- iterate over map
 // console.log('Choose any option...')
 for (const [key, value] of question) {
   if (typeof key === 'number') {
-    // console.log(`Option ${key}: ${value}`)
+    console.log(`Option ${key}: ${value}`)
   }
 }
+// re:
+// Option 1: JavaScript
+// dsPartTwo.js:231 Option 2: Python
+// dsPartTwo.js:231 Option 3: Java
+
 // const option = +prompt('Choose an option (must be 1 or 2 or 3)')
 // console.log(question.get(question.get('correct') === option))
 
@@ -217,7 +256,7 @@ for (const [key, value] of question) {
  * 
  * but there are 4 types of DS that we can use:
  * - Arrays: when we need an ordered list of values
- * - Objects: when we need a collection of key-value pairs (keys are to describe the values)
+ * - Objects: when we need a collection of key-value pairs (keys1 are to describe the values)
  *    - JSON data that we get from the web is always in the form of objects
  * - Sets: when we need to store unique values
  * - Maps: when we need to map values to keys
@@ -232,7 +271,7 @@ for (const [key, value] of question) {
  * --- Objects vs Maps: key-value pairs
  * - Objects: simple for key-value storage .. easy to access data through dot (.) and square braces [] .. 
  *      - use objects when functions as values are needed .. we can use this keyword on objects but not on maps .. 
- * - Maps: map keys can have any data types .. easy to iterate .. 
+ * - Maps: map keys1 can have any data types .. easy to iterate .. 
  */
 
 // challenge #3
@@ -275,22 +314,24 @@ const events = [new Set(...gameEvents.values())]
 gameEvents.delete(64)
 
 // 3. 
-const keys = [...gameEvents.keys()]
-// const highTime = Math.max(...keys) // way-1
+const keys1 = [...gameEvents.keys()]
+// sol-1:
+// const highTime = Math.max(...keys1)
 
-let maxTime = keys[0]
-for(let i = 0; i < keys.length; i++) {
-  if (maxTime < keys[i]) {
-    maxTime = keys[i]
+// sol-2:
+let maxTime = keys1[0]
+for(let i = 0; i < keys1.length; i++) {
+  if (maxTime < keys1[i]) {
+    maxTime = keys1[i]
   } 
 }
-// console.log(maxTime) // way-2
-console.log(`An event happened, on average, every ${maxTime / gameEvents.size} minutes`)
+// console.log(maxTime) 
+// console.log(`An event happened, on average, every ${maxTime / gameEvents.size} minutes`)
 
 // 4.
 for (let [min, event] of gameEvents){
   const half = min <= 45 ? 'FIRST' : 'SECOND'
-  console.log(`${half} HALF ${min}: ${event}`)
+  // console.log(`${half} HALF ${min}: ${event}`)
 }
 
 

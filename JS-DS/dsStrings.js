@@ -138,7 +138,7 @@ const testData = (content) => {
     for (const [ind, elements] of alignedContent.entries()){
         const [first, second] = elements.toLowerCase().trim().split('_')
         const res = `${first}${second.replace(second[0], second[0].toUpperCase())}`
-        console.log(`${res.padEnd(20, " ")} ${'✅'.repeat(ind + 1)}`)
+        // console.log(`${res.padEnd(20, " ")} ${'✅'.repeat(ind + 1)}`)
     }
 
 }
