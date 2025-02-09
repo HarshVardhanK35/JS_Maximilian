@@ -205,7 +205,8 @@ btnLogin.addEventListener("click", (e) => {
 
   // check the pin associated with curr.acc and the pin entered
   if (currentAccount?.pin === +inputLoginPin.value) {
-    // emptying form fields
+    
+    // clearing form fields
     inputLoginUsername.value = inputLoginPin.value = "";
     inputLoginPin.blur(); // to remove focus
 
@@ -299,7 +300,7 @@ btnLoan.addEventListener("click", (e) => {
   }
   // clear the input fields
   inputLoanAmount.value = "";
-  inputLoanAmount.blur();
+  // inputLoanAmount.blur();
 });
 
 // 9. Sort the movements
