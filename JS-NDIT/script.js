@@ -82,24 +82,35 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 // 1. Displaying Movements
 // ---
-const displayMovements = function (movements, sort = false) {
+const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = "";
 
   // here movements.slice() used to get the copy, so this will not change the actual array
   const moves = sort
-    ? movements.slice().sort((a, b) => {
+    ? acc.movements.slice().sort((a, b) => {
         return a - b;
       })
-    : movements;
+    : acc.movements;
 
   moves.forEach(function (mov, i) {
     const type = mov > 0 ? "deposit" : "withdrawal";
+
+    const date = new Date(acc.movementsDates[i])
+
+    // dates
+    const day = `${date.getDate()}`.padStart(2, 0)
+    const month = `${date.getMonth() + 1}`.padStart(2, 0)
+    const year = date.getFullYear()
+
+    // display current date and time below the balance
+    const displayDate = `${day}/${month}/${year}`
 
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
+          <div class="movements__date">${displayDate}</div>
         <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
@@ -202,7 +213,7 @@ const updateUI = (acc) => {
   calcDisplaySummary(acc);
 
   // display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------
@@ -212,6 +223,13 @@ const updateUI = (acc) => {
 // 5. Implementing Login
 // ---
 let currentAccount;
+
+// ---------------
+// TEMPORARY LOGIN
+// ---
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 1;
 
 btnLogin.addEventListener("click", (e) => {
   // prevent form from submitting...
@@ -235,6 +253,19 @@ btnLogin.addEventListener("click", (e) => {
       currentAccount.owner.split(" ")[0]
     }!`;
     containerApp.style.opacity = 1;
+
+    // create current date and time
+    const now = new Date()
+    // dates
+    const day = `${now.getDate()}`.padStart(2, 0)
+    const month = `${now.getMonth() + 1}`.padStart(2, 0)
+    const year = now.getFullYear()
+    // time
+    const hour = `${now.getHours()}`.padStart(2, 0)
+    const minute = `${now.getMinutes()}`.padStart(2, 0)
+
+    // display current date and time below the balance
+    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minute}`
 
     // Update the UI
     updateUI(currentAccount);
@@ -267,6 +298,10 @@ btnTransfer.addEventListener("click", (e) => {
     // operating with transfers
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
+
+    // Add dates for transfer and received amounts 
+    currentAccount.movementsDates.push(new Date().toISOString())
+    receiverAcc.movementsDates.push(new Date().toISOString())
 
     // Update The UI
     updateUI(currentAccount);
@@ -316,6 +351,9 @@ btnLoan.addEventListener("click", (e) => {
     // add amount to the user movements
     currentAccount.movements.push(amount);
 
+    // Add dates for loan amount that was credited
+    currentAccount.movementsDates.push(new Date().toISOString())
+
     // update UI
     updateUI(currentAccount);
   }
@@ -330,7 +368,7 @@ let sorted = false;
 btnSort.addEventListener("click", (e) => {
   e.preventDefault();
 
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
 
@@ -379,6 +417,7 @@ btnSort.addEventListener("click", (e) => {
 // console.log(Number.isInteger(23)); // true
 // console.log(Number.isInteger(23.0)); // true
 // console.log(Number.isInteger(23.1)); // false // why? because 23.1 is a float number
+
 
 // --------------------
 // 2. Math and Rounding
@@ -438,3 +477,81 @@ Math.floor(23.3) // 23 // rounds the number to the lower integer // 23.9 => 23
 
 // NOTE:
 // - toFixed() on 2.7 which is a primitive so JS and primitives do not have methods .. BTS JS does boxing and converts into an number object after operation.. converted back to primitive that is str
+
+
+// ---------------------
+// 3. Remainder Operator => SKIPPED
+// ---
+
+// -----------------------
+// 4. Numerical Separators => SKIPPED (10_000_000)
+// ---
+
+// ----------------------
+// 5. Working with BigInt 
+// ---
+// - numbers are represented in 64 bits in JS .. 
+//  - of these 64 ones and zeroes, only 53 are used to store the number itself and remaining are used to store the position of the decimal point
+// - so the max number that can be represented is 2^53 - 1 => 9007199254740991 (53 - 1 => as numbers starts from 'zero')
+
+// - to work with numbers greater than this, we can use "BigInt" .. BigInt is a new primitive in JS that allows us to work with numbers greater than 2^53 - 1
+// 1. so, add 'n' at the end of the number to convert it into BigInt .. 
+// 2. without 'n' => use BigInt() constructor
+
+
+// ---------------------
+// 6. Creating Dates
+// ---
+// - Date is a built-in object in JS that allows us to work with dates and times .. 
+//  - there are 4 ways to create a date object
+// 1. new Date() => creates a new date object with the current date and time
+// 2. new Date("month day year hours:minutes:seconds") => creates a new date object with the specified date and time
+// 3. new Date(year, month, day, hours, minutes, seconds) => creates a new date object with the specified date and time
+// 4. new Date(milliseconds) => creates a new date object with the specified number of milliseconds since the Unix Epoch (Jan 1, 1970)
+
+// - months are zero based in JS .. so January is 0 and December is 11
+// - days are also zero based .. so Sunday is 0 and Saturday is 6
+// - date object has many methods to work with dates and times
+
+// - to get the current date and time
+// const now = new Date()
+// console.log(now)
+
+// - to get the current date and time in milliseconds
+// console.log(new Date().getTime())
+
+// - to get the current date and time in string format
+// console.log(new Date().toString())
+
+// - to get the current date and time in UTC format
+// console.log(new Date().toUTCString())
+
+// - to get the current date and time in ISO format
+// console.log(new Date().toISOString())
+
+// - to get the time with given arguments 
+// console.log(new Date(2037, 10, 19, 15, 23, 5)) // Thu Nov 19 2037 15:23:05 GMT+0530 (India Standard Time)
+
+// - to get the time with given string
+// console.log(new Date("December 24, 2015")) // Thu Dec 24 2015 00:00:00 GMT+0530 (India Standard Time)
+
+// TIMESTAMPS
+// --
+// - timestamp is the number of milliseconds that have passed since the Unix Epoch (Jan 1, 1970)
+// - to get the timestamp of the current date and time 
+// console.log(new Date().getTime()) // 1739195347877
+// console.log(Date.now()) // 1739195347877
+
+// GETTERS
+const future = new Date(2037, 10, 19, 15, 23)
+// console.log(future)
+// future.getFullYear() => 2037 // future.getMonth() => 10 // future.getDate() => 19 
+// future.getDay() => 4 // future.getHours() => 15 // future.getMinutes() => 23
+// future.getSeconds() => 0 
+// future.toISOString() => "2037-11-19T09:53:00.000Z"
+
+// SETTERS
+// to set a new year - use .setFullyear()
+future.setFullYear(2040)
+// console.log(future) // Sun Nov 19 2040 15:23:00 GMT+0530 (India Standard Time)
+// there are other methods: setMonth(), setDate(), setHours(), setMinutes(), setSeconds() .. etc
