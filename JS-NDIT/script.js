@@ -15,14 +15,14 @@ const account1 = {
   pin: 1111,
 
   movementsDates: [
-    '2019-11-18T21:31:17.178Z',
-    '2019-12-23T07:42:02.383Z',
-    '2020-01-28T09:15:04.904Z',
-    '2020-04-01T10:17:24.185Z',
-    '2020-05-08T14:11:59.604Z',
-    '2020-05-27T17:01:17.194Z',
-    '2020-07-11T23:36:17.929Z',
-    '2020-07-12T10:51:36.790Z',
+    '2024-10-18T21:31:17.178Z',
+    '2024-11-23T07:42:02.383Z',
+    '2024-12-28T09:15:04.904Z',
+    '2025-01-01T10:17:24.185Z',
+    '2025-01-08T14:11:59.604Z',
+    '2025-01-27T17:01:17.194Z',
+    '2025-02-06T11:36:17.929Z',
+    '2025-02-11T10:51:36.790Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -35,14 +35,14 @@ const account2 = {
   pin: 2222,
 
   movementsDates: [
-    '2019-11-01T13:15:33.035Z',
-    '2019-11-30T09:48:16.867Z',
-    '2019-12-25T06:04:23.907Z',
-    '2020-01-25T14:18:46.235Z',
-    '2020-02-05T16:33:06.386Z',
-    '2020-04-10T14:43:26.374Z',
-    '2020-06-25T18:49:59.371Z',
-    '2020-07-26T12:01:20.894Z',
+    '2024-10-01T13:15:33.035Z',
+    '2024-11-30T09:48:16.867Z',
+    '2024-11-25T06:04:23.907Z',
+    '2024-12-25T14:18:46.235Z',
+    '2024-12-05T16:33:06.386Z',
+    '2025-01-10T14:43:26.374Z',
+    '2025-02-07T18:49:59.371Z',
+    '2025-02-11T12:01:20.894Z',
   ],
   currency: 'USD',
   locale: 'en-US',
@@ -82,28 +82,77 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 // 1. Displaying Movements
 // ---
+
+// 1.1 format dates
+const formaMoveDates = (date, locale) => {
+
+  const calcDaysPassed = (date1, date2) => {
+    return Math.round(Math.abs((date2 - date1) / (1000 * 60 * 60 * 24)))
+  }
+
+  const daysBetween = calcDaysPassed(new Date(), date)
+  // console.log(daysBetween)
+
+  if (daysBetween === 0) {
+    return 'Today'
+  }
+  else if(daysBetween === 1) {
+    return 'Yesterday'
+  }
+  else if (daysBetween <= 7) {
+    return `${daysBetween} days ago`
+  }
+  else {
+    // // dates
+    // const day = `${date.getDate()}`.padStart(2, 0)
+    // const month = `${date.getMonth() + 1}`.padStart(2, 0)
+    // const year = date.getFullYear()
+    
+    // // display current date and time below the balance
+    // return `${day}/${month}/${year}`
+
+    // replacing it with internationalization and locale
+    return new Intl.DateTimeFormat(locale).format(date)
+  }
+}
+
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = "";
 
-  // here movements.slice() used to get the copy, so this will not change the actual array
-  const moves = sort
-    ? acc.movements.slice().sort((a, b) => {
-        return a - b;
-      })
-    : acc.movements;
+  // create a separate object for movement dates
+  const combinedMovesDates = acc.movements.map((moves, i) => {
+    return ({
+      move: moves,
+      moveDate: acc.movementsDates[i]
+    })
+  })
+  // console.log(combinedMovesDates)
 
-  moves.forEach(function (mov, i) {
-    const type = mov > 0 ? "deposit" : "withdrawal";
+  // - here movements.slice() used to get the copy, so this will not change the actual array ..
+  // - DISABLED THE FOLLOWING LINES -> THIS HAS THROWN AN ERROR .. SO DISABLED
+  // ---
+  // const moves = sort ? acc.movements.slice().sort((a, b) => {
+  //       return a - b;
+  //     })
+  //   : acc.movements;
+  
+  // - CORRECT way of SORTING! 
+  // ---
+  if (sort) {
+    combinedMovesDates.sort((a, b) => {
+      return a.move - b.move;
+    })
+  }
 
-    const date = new Date(acc.movementsDates[i])
+  combinedMovesDates.forEach(function (obj, i) {
 
-    // dates
-    const day = `${date.getDate()}`.padStart(2, 0)
-    const month = `${date.getMonth() + 1}`.padStart(2, 0)
-    const year = date.getFullYear()
+    const {move, moveDate} = obj;
 
-    // display current date and time below the balance
-    const displayDate = `${day}/${month}/${year}`
+    // checking the type ...
+    const type = move > 0 ? "deposit" : "withdrawal";
+
+    const date = new Date(moveDate)
+    const displayDate = formaMoveDates(date, acc.locale)
 
     const html = `
       <div class="movements__row">
@@ -111,7 +160,7 @@ const displayMovements = function (acc, sort = false) {
       i + 1
     } ${type}</div>
           <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${mov.toFixed(2)}€</div>
+        <div class="movements__value">${move.toFixed(2)}€</div>
       </div>
     `;
     containerMovements.insertAdjacentHTML("afterbegin", html);
@@ -132,6 +181,17 @@ const displayMovements = function (acc, sort = false) {
 
 // --- accounts_array
 // const accounts = [account1, account2, account3, account4];
+
+// const account1 = {
+//   owner: "Jonas Schmedtmann",
+
+// this "createUsernames" fn. creates "username" a new key with values of 1st letters of names
+// "createUsernames" is defined below ...
+
+//   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+//   interestRate: 1.2, // %
+//   pin: 1111,
+// };
 
 const createUsernames = function (accs) {
   accs.forEach((acc) => {
@@ -216,9 +276,41 @@ const updateUI = (acc) => {
   displayMovements(acc);
 };
 
+// Logout function / timer
+const startLogoutTimer = () => {
+  
+  // set time to 5 minutes
+  let time = 10
+  
+  // call timer for every second
+  const timer = setInterval(() => {
+
+    const min = String(Math.trunc(time / 60)).padStart(2, 0)
+    const sec = String(Math.trunc(time % 60)).padStart(2, 0)
+
+    // In each call, print out the remaining time to UI
+    labelTimer.textContent = `${min}:${sec}`
+
+    // decrease the time 1 sec every time
+    time = time - 1
+    
+    // when time is at 0, logout the user and update the UI 
+    if(time === 0){
+      
+      // clear the timer
+      clearInterval(timer)
+
+      // display UI and welcome message
+      labelWelcome.textContent = `Login to get started`
+
+      // reset the opacity to zero
+      containerApp.style.opacity = 0;
+    }
+  }, 1000)
+}
+
 // -------------------------------------------------------------------------------------------------------------------------------
 // Event handlers
-
 
 // 5. Implementing Login
 // ---
@@ -230,6 +322,9 @@ let currentAccount;
 // currentAccount = account1;
 // updateUI(currentAccount);
 // containerApp.style.opacity = 1;
+
+// Experimenting with Intl API
+// ---
 
 btnLogin.addEventListener("click", (e) => {
   // prevent form from submitting...
@@ -255,17 +350,40 @@ btnLogin.addEventListener("click", (e) => {
     containerApp.style.opacity = 1;
 
     // create current date and time
-    const now = new Date()
-    // dates
-    const day = `${now.getDate()}`.padStart(2, 0)
-    const month = `${now.getMonth() + 1}`.padStart(2, 0)
-    const year = now.getFullYear()
-    // time
-    const hour = `${now.getHours()}`.padStart(2, 0)
-    const minute = `${now.getMinutes()}`.padStart(2, 0)
+    // const now = new Date()
+    // // dates
+    // const day = `${now.getDate()}`.padStart(2, 0)
+    // const month = `${now.getMonth() + 1}`.padStart(2, 0)
+    // const year = now.getFullYear()
+    // // time
+    // const hour = `${now.getHours()}`.padStart(2, 0)
+    // const minute = `${now.getMinutes()}`.padStart(2, 0)
 
-    // display current date and time below the balance
-    labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minute}`
+    // // display current date and time below the balance
+    // labelDate.textContent = `${day}/${month}/${year}, ${hour}:${minute}`
+
+    const now = new Date()
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      // month: 'long', // gives month in words
+      month: 'numeric',
+      year: 'numeric',
+      // weekday: 'long',
+    }
+
+    // to get the locale from the user browser
+    const locale = navigator.language
+    console.log(locale) // en-IN
+
+    // pass the above local to below API
+    // new Intl.DateTimeFormat(locale, options)
+
+    labelDate.textContent = new Intl.DateTimeFormat(`${currentAccount.locale}`, options).format(now)
+
+    // start the timer 
+    startLogoutTimer()
 
     // Update the UI
     updateUI(currentAccount);
@@ -348,14 +466,18 @@ btnLoan.addEventListener("click", (e) => {
       return mov >= 0.1 * amount;
     })
   ) {
-    // add amount to the user movements
-    currentAccount.movements.push(amount);
 
-    // Add dates for loan amount that was credited
-    currentAccount.movementsDates.push(new Date().toISOString())
+    // implementing setTimeout to delay the approval of loan sanction
+    setTimeout(() => {
+      // add amount to the user movements
+      currentAccount.movements.push(amount);
 
-    // update UI
-    updateUI(currentAccount);
+      // Add dates for loan amount that was credited
+      currentAccount.movementsDates.push(new Date().toISOString())
+
+      // update UI
+      updateUI(currentAccount);
+    }, 3000)
   }
   // clear the input fields
   inputLoanAmount.value = "";
@@ -543,7 +665,7 @@ Math.floor(23.3) // 23 // rounds the number to the lower integer // 23.9 => 23
 // console.log(Date.now()) // 1739195347877
 
 // GETTERS
-const future = new Date(2037, 10, 19, 15, 23)
+// const future = new Date(2037, 10, 19, 15, 23)
 // console.log(future)
 // future.getFullYear() => 2037 // future.getMonth() => 10 // future.getDate() => 19 
 // future.getDay() => 4 // future.getHours() => 15 // future.getMinutes() => 23
@@ -552,6 +674,90 @@ const future = new Date(2037, 10, 19, 15, 23)
 
 // SETTERS
 // to set a new year - use .setFullyear()
-future.setFullYear(2040)
+// future.setFullYear(2040)
 // console.log(future) // Sun Nov 19 2040 15:23:00 GMT+0530 (India Standard Time)
 // there are other methods: setMonth(), setDate(), setHours(), setMinutes(), setSeconds() .. etc
+
+
+// -----------------------
+// 7. Operations wit Dates
+// ---
+const future = new Date(2037, 10, 19, 15, 23)
+
+const calcDaysPassed = (date1, date2) => {
+  return Math.abs((date2 - date1) / (1000 * 60 * 60 * 24))
+}
+
+const daysBetween = calcDaysPassed(new Date(2037, 3, 16), new Date(2037, 3, 6))
+// console.log(daysBetween)
+
+
+// ----------------------------------
+// 8. Internationalizing Dates (Intl)
+// ---
+
+// - JS has new internationalization API, which allows us to easily format numbers and strings according to different languages ..
+// - the syntax used for internalizing dates ..
+//  - "labelDate.textContent = new Intl.DateTimeFormat()"
+
+// new Intl.DateTimeFormat(locale, ) .. 
+// --
+// 1. locale:
+// 1st arg {en-US}: takes language-country .. this creates a format and on this we call .format(new Date())
+// --- 
+// new Intl.DateTimeFormat(en-US).format(now)
+
+// continues ... inside the application code
+
+
+// -------------------------------------
+// 9. Timers: setTimeout and setInterval
+// ---
+// setTimeout is a function which require a fn. as a callback and time in milliseconds .. 
+// this callback will be called after some time in future that was passed in 2nd arg
+// sn:
+setTimeout (() => {}, 3000) // => the callback fn. will get executed after 3 ms = 3000 seconds
+
+// the fn will get delayed by 3 seconds .. 
+// this do not stop the execution of code after the setTimeout fn. this setTimeout fn. registers cb fn. inside it into call stack 
+// ex: 
+// setTimeout(() => {
+//   console.log("after 3 seconds")
+// }, 3000)
+// console.log("Executed just now!")
+
+// this mechanism is called "ASYNCHRONOUS JS"
+
+// PASSING ARGUMENTS INTO setTimeout()
+// setTimeout((greet, daySes) => {
+//   console.log(`${greet}, Good ${daySes}!`)
+// }, 3000, 'Hello', 'Morning')                  // the values passed after the time given are taken as arguments to the cb fn.
+
+// console.log("Hi")
+
+// STOPPING the execution of a setTimeout fn. using clearTimeout() => parameter: must be the name of variable in which setTimeout is stored
+const numArray = [2, 4, 6, 8];
+const evenArrExecuter = setTimeout((...arr) => {
+  console.log(`Array consisting of even numbers ${arr}`)
+}, 1000, ...numArray)
+
+numArray.forEach((num) => {
+  if (num % 2 !== 0) {
+    clearTimeout(evenArrExecuter)
+  }
+})
+
+// SetInterval: the callback fn. runs after every given time period
+setInterval(() => {
+  const now = new Date()
+  // console.log(now)
+}, 1000)
+
+
+// ----------------------------------
+// 10. Implementing a countdown timer
+// ---
+// code: at login section ...
+
+// explanation:
+// 
