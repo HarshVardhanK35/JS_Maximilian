@@ -80,7 +80,7 @@ const inputClosePin = document.querySelector('.form__input--pin');
 // -------------------------------------------------------------------------------------------------------------------------------
 // Functions
 
-// 1. Displaying Movements
+// 1. Displaying Movements and Dates
 // ---
 
 // 1.1 format dates
@@ -116,6 +116,8 @@ const formaMoveDates = (date, locale) => {
   }
 }
 
+// 1.2 Displaying Movements 
+// ---
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = "";
 
@@ -167,9 +169,9 @@ const displayMovements = function (acc, sort = false) {
   });
 };
 
+
 // 2. Creating UserNames
 // ---
-
 // ex:
 // --- single_user
 // const account1 = {
@@ -225,6 +227,7 @@ const calcDisBalance = (acc) => {
   labelBalance.textContent = `${acc.balance.toFixed(2)} EUR`;
 };
 
+
 // 4. Calculate and Display the Summary
 // ---
 const calcDisplaySummary = (acc) => {
@@ -264,6 +267,7 @@ const calcDisplaySummary = (acc) => {
   labelSumInterest.textContent = `${interest.toFixed(2)}€`;
 };
 
+
 // Bonus: Update the UI
 const updateUI = (acc) => {
   // display current balance
@@ -278,12 +282,8 @@ const updateUI = (acc) => {
 
 // Logout function / timer
 const startLogoutTimer = () => {
-  
-  // set time to 5 minutes
-  let time = 10
-  
-  // call timer for every second
-  const timer = setInterval(() => {
+
+  const tickTock = () => {
 
     const min = String(Math.trunc(time / 60)).padStart(2, 0)
     const sec = String(Math.trunc(time % 60)).padStart(2, 0)
@@ -291,9 +291,6 @@ const startLogoutTimer = () => {
     // In each call, print out the remaining time to UI
     labelTimer.textContent = `${min}:${sec}`
 
-    // decrease the time 1 sec every time
-    time = time - 1
-    
     // when time is at 0, logout the user and update the UI 
     if(time === 0){
       
@@ -306,7 +303,18 @@ const startLogoutTimer = () => {
       // reset the opacity to zero
       containerApp.style.opacity = 0;
     }
-  }, 1000)
+
+    // decrease the time 1 sec every time
+    time = time - 1
+  }
+  // set time to 5 minutes
+  let time = 120
+  
+  // call timer for every second
+  tickTock();
+  const timer = setInterval(tickTock, 1000)
+
+  return timer;
 }
 
 // -------------------------------------------------------------------------------------------------------------------------------
@@ -314,7 +322,7 @@ const startLogoutTimer = () => {
 
 // 5. Implementing Login
 // ---
-let currentAccount;
+let currentAccount, timer;
 
 // ---------------
 // TEMPORARY LOGIN
@@ -383,7 +391,13 @@ btnLogin.addEventListener("click", (e) => {
     labelDate.textContent = new Intl.DateTimeFormat(`${currentAccount.locale}`, options).format(now)
 
     // start the timer 
-    startLogoutTimer()
+    if(timer) {
+      clearInterval(timer)
+    }
+
+    // ! problem: when a user logs out and logs in again with another credentials, the timer will not start again..
+    // ? I have to reset the timer for every time a new user logs in..
+    timer = startLogoutTimer()
 
     // Update the UI
     updateUI(currentAccount);
@@ -423,11 +437,16 @@ btnTransfer.addEventListener("click", (e) => {
 
     // Update The UI
     updateUI(currentAccount);
+
+    // reset the timer for every transfer
+    clearInterval(timer)
+    timer = startLogoutTimer()
   }
   // clean the input fields
   inputTransferAmount.value = inputTransferTo.value = "";
   inputTransferAmount.blur();
 });
+
 
 // 7. Delete an account
 // ---
@@ -451,6 +470,7 @@ btnClose.addEventListener("click", (e) => {
     containerApp.style.opacity = 0;
   }
 });
+
 
 // 8. Loan Request
 // ---
@@ -479,6 +499,11 @@ btnLoan.addEventListener("click", (e) => {
       updateUI(currentAccount);
     }, 3000)
   }
+
+  // reset the timer for every transfer
+  clearInterval(timer)
+  timer = startLogoutTimer()
+
   // clear the input fields
   inputLoanAmount.value = "";
   inputLoanAmount.blur();
@@ -738,7 +763,7 @@ setTimeout (() => {}, 3000) // => the callback fn. will get executed after 3 ms 
 // STOPPING the execution of a setTimeout fn. using clearTimeout() => parameter: must be the name of variable in which setTimeout is stored
 const numArray = [2, 4, 6, 8];
 const evenArrExecuter = setTimeout((...arr) => {
-  console.log(`Array consisting of even numbers ${arr}`)
+  // console.log(`Array consisting of even numbers ${arr}`)
 }, 1000, ...numArray)
 
 numArray.forEach((num) => {
@@ -760,4 +785,7 @@ setInterval(() => {
 // code: at login section ...
 
 // explanation:
-// 
+// ---
+// - the timer fn. is called at the time of login .. 
+// - the timer fn. has to reset for every login, and for also if there is any activity in the account (transfers, loan, etc.)
+// - the timer fn. will be called at the time of login and will run for 5 minutes .. 
