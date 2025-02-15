@@ -1,12 +1,16 @@
 'use strict';
 
-// ----------------------------------------------------------------------------------------------------------------------------
-// Modal window
-
 const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
+
+// selecting the button and section - for smooth scrolling
+const btnScrollTo = document.querySelector('.btn--scroll-to')
+const section1 = document.querySelector('#section--1')
+
+// ----------------------------------------------------------------------------------------------------------------------------
+// ! MODAL WINDOW
 
 const openModal = function (e) {
   e.preventDefault();
@@ -35,80 +39,52 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
-
 // ----------------------------------------------------------------------------------------------------------------------------
+// ! SMOOTH SCROLLING
 
-// selecting element(s)
-const allSections = document.querySelectorAll('.section')
-const header = document.querySelector('.header')
+// old way of smooth scrolling
+btnScrollTo.addEventListener('click', (e) => {
 
-// creating an element
-const message = document.createElement('div')
+  // - gets the coordinates of the element
+  // const s1Coords = section1.getBoundingClientRect()
 
-// adding class to an element
-message.classList.add('cookie-message')
+  // - scrolling - old way - 1  
+  // window.scrollTo(s1Coords.left + window.scrollX, s1Coords.top + window.scrollY);
 
-// 1st way of adding content 
-// message.textContent = 'we use cookies for improved functionality and analytics!'
-
-// 2nd way of adding content to an element
-message.innerHTML =  `we use cookies for improved functionality and analytics! <button class = "btn btn--close-cookie">Got it!</button>`
-
-// adding element (message) to DOM element (header)
-// header.prepend(message)       // adds as the 1st child 
-header.append(message)     // adds as the last child
-
-// deleting elements
-document.querySelector('.btn--close-cookie').addEventListener('click', () => {
-  message.remove()
+  // - scrolling smoothly - old way - 2
+  // window.scrollTo({
+  //   left: s1Coords.left + window.scrollX,
+  //   top: s1Coords.top + window.scrollY,
+  //   behavior: 'smooth'
+  // })
 })
 
-// set a style on an element
-message.style.backgroundColor = '#37383d'
-message.style.width = '120%'
+// modern way of smooth scrolling
+btnScrollTo.addEventListener('click', (e) => {
+  section1.scrollIntoView({ behavior: 'smooth' })
+})
 
-// console.log(message.style.color)
-// console.log(message.style.backgroundColor)
+// ----------------------------------------------------------------------------------------------------------------------------
+// ! PAGE NAVIGATION
 
-// console.log(getComputedStyle(message).color)
+// ? AN IMPERFECT WAY 
+// ---
+// document.querySelectorAll('.nav__link').forEach((el) => {
+//   el.addEventListener('click', function(e) {
+//     e.preventDefault() // to prevent the default behavior
+//     const id = this.getAttribute('href') // get the ID out of the elements .. after logging, we get #section--1, #section--2, #section--3 .. 
+//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' }) // scrolling to the section
+//   })
+// })
 
-// modify the style using getComputedStyle()
-message.style.height = Number.parseInt(getComputedStyle(message).height) + 30 + 'px'
+// ? USING EVENT DELEGATION
+// ---
+document.querySelector('.nav__links').addEventListener('click', function(e) {
 
-// custom CSS properties ex ...
-// :root {
-//   --color-primary: #5ec576;
-// }
-// modifying the custom CSS properties using JS and "document.documentElement"
-// document.documentElement.style.setProperty('--color-primary', 'green')
+  e.preventDefault()  // to prevent the default behavior at any event handler function
 
-// element ex ...
-// img
-// src="img/logo.png"
-// alt="Bankist logo"
-// class="nav__logo"
-// designer="harsha" // A NON_STANDARD ATT
-// id="logo"
-
-// selection
-const logo = document.querySelector('.nav__logo')
-
-// read the standard-attributes
-// console.log(logo.src)
-// console.log(logo.alt)
-
-// non-standard attributes cannot be read but can be using .getAttribute
-// console.log(logo.designer) // undefined
-// console.log(logo.getAttribute('designer')) // harsha
-
-// to read the class-names use.. 'className'
-// console.log(logo.className)
-
-// set an attribute
-logo.alt = 'Beautiful Minimalistic Logo'
-// console.log(logo.alt)
-
-// using setAttribute() fn
-logo.setAttribute('company', 'bankist')
-// console.log(logo.getAttribute('company')) // bankist // used getAttribute for non-standard attributes
-
+  if(e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href')
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' }) // scrolling to the section
+  }
+})
