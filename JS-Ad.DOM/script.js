@@ -88,3 +88,31 @@ document.querySelector('.nav__links').addEventListener('click', function(e) {
     document.querySelector(id).scrollIntoView({ behavior: 'smooth' }) // scrolling to the section
   }
 })
+
+// ----------------------------------------------------------------------------------------------------------------------------
+// ! TABBED COMPONENT
+
+const tabs = document.querySelectorAll(".operations__tab")
+const tabsContainer = document.querySelector(".operations__tab-container")
+const tabsContent = document.querySelectorAll('.operations__content')
+
+tabsContainer.addEventListener('click', function(e) {
+  // get the clicked tab
+  const clicked = e.target.closest('.operations__tab')
+  // guard clause
+  if(!clicked) {
+    return
+  }
+  // remove the active class from all the tabs and content
+  tabsContent.forEach((tc) => {
+    tc.classList.remove('operations__content--active')
+  })
+  // remove the active class from all the tabs
+  tabs.forEach((t) => {
+    t.classList.remove('operations__tab--active')
+  })
+  // add the active class to the clicked tab
+  clicked.classList.add('operations__tab--active')
+  // add the active class to the content
+  document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active')
+})

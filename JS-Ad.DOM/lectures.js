@@ -518,6 +518,178 @@ document.querySelector('.nav__links').addEventListener('click', function(e) {   
   }
 })
  * 
+ * ---------------------------------------------------------------------------------------------------------------------------- 
+ * ! 8. DOM Traversing
+ * -------------------
+ * - basically we can select an element based on another element (selecting relative ele to a certain other ele)
+ * - traversing is moving up and down in the DOM tree .. 
+ * 
+ * ? remember: 
+ * ? - querySelector() works on elements also but not only on document || 
+ * ? - Nodes can be anything that can be texts, comments, elements anything! ||
+ * ? - 
+ *  
+ * ! GOING DOWNWARDS: CHILD
+ * ---
+ * - selection of child elements can be done using ".childNodes", ".children", ".firstElementChild", ".lastElementChild" of an element
+ * ---
+// select an element -
+const h1 = document.querySelector('h1')
+
+// 'h1' has child nodes with class - "highlight" | if there any child nodes with class "highlight" at somewhere not under h1, then it will not be selected
+console.log(h1.querySelectorAll('.highlight')) // returns a NodeList with 2 elements: NodeList(2) [span.highlight, span.highlight]
+
+- to get the direct children we have to use ".children" property of the element
+- to get all the children including texts, comments we use ".childNodes" property of the element
+
+// to get children of 'h1' with class - "highlight"
+console.log(h1.childNodes) // returns a NodeList with 5 elements: NodeList(5) [text, span.highlight, text, span.highlight, text]
+
+// to get the live collection of direct children of 'h1' with class - "highlight"
+console.log(h1.children) // returns an HTMLCollection with 3 elements: HTMLCollection(3) [span.highlight, br, span.highlight]
+
+// 1st and last child of 'h1'
+h1.firstElementChild.style.color = 'white'
+h1.lastElementChild.style.color = 'orangered'
+ *  
+ * ! GOING UPWARDS: PARENT
+ * ---
+ * - selection of parent elements can be done using ".parentNode", ".parentElement" of an element 
+// ---
+// to get direct parent of 'h1' use - parentNode similar to childNodes for children
+console.log(h1.parentNode) // returns the parent element of 'h1' - section
+console.log(h1.parentElement) // returns the parent element of 'h1' - section
+
+// mostly, we have to find a parent element how far it is from the target, so we have to "closest()" method
+// - closest() needs a query-string similar to querySelector() and querySelectorAll()
+console.log(h1.closest('.header')) // returns the 'header' element which is the parent of 'h1'
+console.log(h1.closest('h1')) // returns the 'h1' itself
+ * 
+ * - closest() being the opposite of querySelector() and querySelectorAll() .. both receive query-string as an argument
+ *     - whereas querySelector() and querySelectorAll() finds the children no matter how deep in DOM tree
+ *     - closest() finds the parent element no matter how far it is from the target element
+ * 
+ * ! GOING SIDEWAYS: SIBLINGS
+ * ---
+ * - we can only access to direct siblings .. using ".nextElementSibling" and ".previousElementSibling" properties of an element
+ * ---
+// to get the next sibling of 'h1' - nextElementSibling and previousElementSibling for previous sibling
+console.log(h1.nextElementSibling) // returns the previous sibling of 'h1' - <h4> element
+console.log(h1.previousElementSibling) // returns the next sibling of 'h1' - null cause there is no sibling
+ * 
+ * ! GET NODES
+ * --- 
+ * - use "previousSibling" and "nextSibling" to get the siblings of an element
+ * 
+ * ! to get all siblings of an element...
+ * ---
+console.log(h1.parentElement.children) // returns the HTMLCollection of all the children of 'h1' parent which is trick to get all the siblings
+ * 
+ * - this returns all the siblings of the element in the form of an HTMLCollection | so we can loop over it using "forEach"
+ * 
+ * ----------------------------------------------------------------------------------------------------------------------------
+ * ! 9. Building a Tabbed Component
+ * --------------------------------
+ * - the whole component is with the class of "operations" as a parent .. and a container "operations__tab-container" which contains all the tabs 
+ * - when a tab is clicked.. the content which was hidden gets displayed by changing the class to "active"
+ 
+// HTML element:
+// ---
+// ? <div class="operations">
+// ?  <div class="operations__tab-container">
+    <button
+// ?      class="btn operations__tab operations__tab--1 operations__tab--active"
+      data-tab="1"
+    >
+      <span>01</span>Instant Transfers
+    </button>
+// ?    <button class="btn operations__tab operations__tab--2" data-tab="2">
+      <span>02</span>Instant Loans
+    </button>
+// ?    <button class="btn operations__tab operations__tab--3" data-tab="3">
+      <span>03</span>Instant Closing
+    </button>
+  </div>
+  <div
+// ?    class="operations__content operations__content--1 operations__content--active"
+  >
+// ?    <div class="operations__icon operations__icon--1">
+    </div>
+    <h5 class="operations__header">
+      Transfer money to anyone, instantly! No fees, no BS.
+    </h5>
+  </div>
+ // ? <div class="operations__content operations__content--2">
+    <div class="operations__icon operations__icon--2">
+    </div>
+    <h5 class="operations__header">
+      Buy a home or make your dreams come true, with instant loans.
+    </h5>
+  </div>
+// ?  <div class="operations__content operations__content--3">
+    <div class="operations__icon operations__icon--3">
+    </div>
+    <h5 class="operations__header">
+      No longer need your account? No problem! Close it instantly.
+    </h5>
+  </div>
+</div> 
+
+ * ----------------------------------------------------------------------------------------------------------------------------
+ * ! TABBED COMPONENT
+ * 
+ * ! DOM Traversing, Event Delegation in Practice:
+ * ---
+ * - the whole component is with the class of "operations" as a parent .. and a container "operations__tab-container" which contains all the tabs 
+ * - when a tab is clicked.. the content which was hidden gets displayed by changing the class to "active"
+ * 
+// selecting the target elements
+const tabs = document.querySelectorAll(".operations__tab")
+const tabsContainer = document.querySelector(".operations__tab-container")
+const tabsContent = document.querySelectorAll('.operations__content')
+
+// implementing Event Delegation
+tabsContainer.addEventListener('click', function(e) {
+  
+  // targeting the closest parent element - which is DOM traversing: Moving Upwards
+  // we should not use parentElement as clicking on actual btn refers to it's parent element that is: whole container ("operations__tab-container")
+  // we replaced it with closest so that it will trigger same for span and button as well
+  const clicked = e.target.closest('.operations__tab')
+
+  // guard clause - to protect clicks from returning null value
+  // if clicked on between the buttons inside the container which returns a null: so it has to be checked
+  if(!clicked) {
+    return
+  }
+
+  // 1st remove the tabs content active class from all the tabs
+  tabsContent.forEach((tc) => {
+    tc.classList.remove('operations__content--active')
+  })
+
+  // in-order to make the tabs active.. 1st remove the active class from all the tabs
+  tabs.forEach((t) => {
+    t.classList.remove('operations__tab--active')
+  })
+
+  // to make buttons move up use.. classList.add()
+  clicked.classList.add('operations__tab--active')
+
+  // activating the content area using data attribute
+  document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active')
+})
+ *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  * 
  *  
+ * 
 */
