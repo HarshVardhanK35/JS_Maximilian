@@ -183,7 +183,7 @@ const book = lufthansa.book
 // as these are three function methods
 // to set the 'this' keyword manually: call, apply, and bind
 
-// --- call method
+// --- the call method
 // - this method takes three arguments:
 //  - function to call book method on to (lufthansa) and two arguments to pass to the function (book that are flightNum and name)
 // ---

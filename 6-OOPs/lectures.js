@@ -13,7 +13,7 @@
  * - objects are self-contained pieces / blocks of code | where objects are building blocks of applications, which interact with each other
  * 
  * * The interactions between objects are made through a public Interface -> API - Application Programming Interface | 
- *  - methods inside this interface that is code outside of objects can access and communicate with the object
+ *   - methods inside this interface that is code outside of objects can access and communicate with the object
  * 
  * - this paradigm was developed to organize the code to make it flexible and maintained easily
  * 
@@ -21,7 +21,7 @@
  * * but in OOPs we code to generate new Objects without simply using object literals 
  * 
  * - In traditional OPPs, we use CLASSES to generate objects {classes are type of blueprints: blueprint is a plan with set of rules} .. 
- *  - so with these classes as blueprint we can build objects with set of rules and logic inside it!
+ *   - so with these classes as blueprint we can build objects with set of rules and logic inside it!
  * 
 ex - class:
 ---
@@ -63,7 +63,7 @@ ex - instance:
     sendMessage (str) {.. logic ..}
 }
  * - Instance(s) is a real object(s) that was built from a class which now can be used in the code (as class is not an object)
- *  - this instance is like a real-house that will be built from a blueprint that was created .. so with the use of this same blueprint we can build as many objects as we can on our need
+ *   - this instance is like a real-house that will be built from a blueprint that was created .. so with the use of this same blueprint we can build as many objects as we can on our need
  * 
  * ? how do we create classes - at FIRST?
  * ---
@@ -211,12 +211,12 @@ Admin {
  *            Object
  * --
  * 1. all objects linked to a prototype obj; so that each obj has a prototype | 
- *  - prototype objects contains methods and properties so that all the objects linked to that prototype can access and use |
- *  - this behavior is called "PROTOTYPAL INHERITANCE"
+ *   - prototype objects contains methods and properties so that all the objects linked to that prototype can access and use |
+ *   - this behavior is called "PROTOTYPAL INHERITANCE"
  * 
  * ? PROTOTYPAL INHERITANCE:
  * - all the objects linked to a certain prototype object can use the methods and props that are defined on that prototype
- *  - objects inherit methods and props from a prototype, so this is why it is called "prototypal inheritance"
+ *   - objects inherit methods and props from a prototype, so this is why it is called "prototypal inheritance"
  * ? NOTE: prototypal - inheritance (which is an instance inheriting from a class) is different from class - inheritance (which is one class inheriting another class) 
  * 
  * 2. Objects "delegate" behavior (methods) to the linked prototype object (behavior: term used to indicate methods)
@@ -324,7 +324,7 @@ console.log(harsha)
  * ---------------
  * Intro:
  * - Each and every fn. in JS has already a property called "Prototype".. so, each object created from a cons.fn. has access to all methods and props (that we define on constructors prototype property)
- *  - all the objects that are created with cons. fn. will inherit, and gets access to all the methods and props that are defined on this proto prop
+ *   - all the objects that are created with cons. fn. will inherit, and gets access to all the methods and props that are defined on this proto prop
  * 
  * ! Adding method to Prototype Property:                                               # IMPLEMENTING BASIC PROTOTYPAL INHERITANCE
  * ---
@@ -373,7 +373,7 @@ console.log(harsha.calcAge())
  * ! Where does the "__proto__" come from for a Object: harsha?
  * ---
  * - as per 3rd point of bts of "new", this created object is linked to a 'prototype' => {} linked to a prototype 
- *  - it is stated that: 'new' operator create "__proto__" prop for any instance created from a cons. fn. and sets the value to the prototype property of that constructor fn.: Person
+ *   - it is stated that: 'new' operator create "__proto__" prop for any instance created from a cons. fn. and sets the value to the prototype property of that constructor fn.: Person
  * 
  * ! Setting a Property on Prototype (Not Only a Method):
  * ---
@@ -411,7 +411,7 @@ Person {name: 'Harsha', birthYear: 2001}
         > [[Prototype]]: Object
  * 
  * - from now on whatever the object that will be created from the cons.fn. will inherit the prototype properties and methods
- *  - visible under __proto__ object of the object that will be created 
+ *   - visible under __proto__ object of the object that will be created 
  * 
  * * to check own properties of an object created from a constructor function
  * - use "".hasOwnProperty()""
@@ -422,7 +422,215 @@ console.log(harsha.hasOwnProperty('species'))   // returns: false
  * - species property is not inside of the object 'harsha', it has access to it on "__proto__" because of it's prototype
  * 
  * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 5. Prototypal Inheritance and Prototype Chain
+ * -----------------------------------------------
+ * 
+ * Explanation:
+ * ---
+ * 1. till now we defined a Constructor Function: 'Person' 
+ * 2. we set a method: calcAge() on the prototype of the constructor fn.: Person => which is 'Person.prototype' (which is an Object)
+ * 
+ * - so, this Person.prototype also refers back to the 'Person' constructor fn. itself (which points back to person itself)
+
+        Person = fn(name, year) {
+            this.name = name
+            this.year = year
+        }
+                            \\ .prototype ⬇️ POINTS-DOWN
+                             \\
+                              \\ .constructor ⬆️ POINTS-UP
+
+                                Person.prototype.calcAge = function() {
+                                    return(new Date(). getFullYear() - this.birthYear)
+                                }
+ * - This 'prototype' is not for the 'Person', but for all the objects that are created from the 'Person' constructor fn.
+ * 
+ * - Using 'new' operator we create an object: 
+ *  1. first, an empty object will be created .. 
+ *  2. "this" refers to the empty object (inside the fn. call) .. inside execution context 'this' is the new empty object ("this === {}")
+ *      - that is why we set the properties on 'this' (this.name = name, this.birthYear = birthYear)
+ *  3. new object is linked to the constructor fn.'s prototype property (so, Person.prototype is now the new object's prototype => which is denoted with __proto__)
+ *  
+ * NOTE:
+ *   - this whole process just works with 'Constructor Functions' and 'ES6 Classes' but not with 'Object.create()' syntax
+ *  
+ * * every time we call Object.someMethod(), JS looks for that fn. on the Object if it is not defined inside the Object, then it looks for it into it's prototype / __proto__
+ * * getting access of methods and props from a prototype is called "PROTOTYPAL INHERITANCE / DELEGATION" (... simply an object inherited / delegated a behavior / method to it's prototype ...)
+ * 
+ * ! Prototype Chain:
+ * ---
+ * ? The ability of looking up for methods and props from a prototype is called "PROTOTYPE CHAIN"
+ * 
+ * - in JS, all objects have a prototype: so, Person.prototype itself a prototype and it is an object too.. so it must also have a prototype
+ *   - the prototype of 'Person.prototype' is "Object.prototype" 
+ *   - (which happens BTS, where Person.prototype is created with 'Object' constructor so, it has Object.prototype as it's prototype)
+ * 
+ * - so, Objects: 'harsha' which was created from Person constructor fn. and has Person.prototype as it's prototype..
+ *   - similarly, Person.prototype is created with Object Constructor fn. and has Object.prototype as it's prototype
+ * 
+ * * so, this entire series of links between 'prototypes' is called "PROTOTYPE CHAIN" (where Object.prototype is the top of this chain)
+ *   - where __proto__ of Object.prototype points to "null" as it is the end of the chain !!!
+ * 
+ * PROTOTYPE CHAIN == SCOPE CHAIN 
+ *   => in proto chain, JS looks for the props and methods whereas in scope chain JS looks for the variables/scopes
+ * 
+ex for a method lookup in a proto chain: 
+---
+harsha.hasOwnProperty('name')
+
+ * ? Searching For hasOwnProperty() a Built-in Method:
+ * ---
+- JS, tries to find "hasOwnProperty()" method on the Object: 'harsha' itself (but JS cannot find this method on the Object created)
+    - so it looks for "hasOwnProperty()" on it's __proto__ that is: "Person.prototype" if it cannot find there .. 
+        - then it searches inside the __proto__ of Person.prototype and definitely finds there which is the top level of the chain that is: "Object.prototype" 
+
+        Check Using: 
+        console.log(harsha.__proto__) // Person.prototype
+        console.log(harsha.__proto__.__proto__) // Object.prototype
+        console.log(harsha.__proto__.__proto__.__proto__) // returns: null (so, Object.prototype is on top)
+
+- !!! From any level the methods can not be copied they simply gets inherited !!!
+ * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 5. Prototypal Inheritance on Built-In Objects
+ * -----------------------------------------------
+ * - Prototypal Inheritance on Built-In Objects: such as Arrays 
+ * 
+const arr = [3, 4, 3, 6, 7, 5, 6, 7, 9]
+console.log(arr.__proto__) // this returns all the methods that can be used on an array // inherited from prototype of Array constructor function
+ * 
+ * - this arr.__proto__ returns a bunch of methods (but any array created does not have all these methods but every array inherit them from it's prototype)
+ * 
+ * ? From Where Does Every Array Inherit These Methods?
+ * ---
+ * * every array created in code inherit methods like: (map, reduce, filter, concat, etc.,) from a common constructor fn. that is Array constructor fn. (which is common for every array)
+ * 
+clg(arr.__proto__ === Array.__proto__)  // returns: true => which means every array inherits methods from prototype of Array constructor fn. 
+ * 
+ * ! Addition of New Method to the Prototypes of an Array Constructor
+ * ---
+ * - we can add a new method to the prototype of an Array constructor and every array that was created in the code gets access to it by inheritance
+ * 
+// adding a method to the prototype of Array constructor
+Array.prototype.unique = function () {
+    return [...new Set(this)]
+}
+
+console.log(arr.unique()) // returns: (6) [3, 4, 6, 7, 5, 9]
+ * 
+ * ! from above code, we extended prototype of a built-in object: Array => however this is not a good idea
+ * 
+ * - so, DOM elements are also objects and they have '__proto__' on them
+
+// select an element, h1
+const h1 = dom.querySelector('h1')
+console.log(h1)
+ * - with this we can see different levels of prototypes of elements on DOM tree
+ * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 6. Coding Challenge #1
+ * ------------------------
+ * 
+1. Use a constructor function to implement a Car. A car has a make and a speed property. The speed property is the current speed of the car in km/h;
+2. Implement an 'accelerate' method that will increase the car's speed by 10, and log the new speed to the console;
+3. Implement a 'brake' method that will decrease the car's speed by 5, and log the new speed to the console;
+4. Create 2 car objects and experiment with calling 'accelerate' and 'brake' multiple times on each of them.
+
+DATA CAR 1: 'BMW' going at 120 km/h
+DATA CAR 2: 'Mercedes' going at 95 km/h
+
+ * 
+// create a constructor fn. on the name of Car
+const Car = function(make, speed) {
+    this.make = make
+    this.speed = speed
+}
+
+// create a prototype: accelerate on constructor fn.
+Car.prototype.accelerate = function(){
+    this.speed = this.speed + 10
+    return this.speed
+}
+
+Car.prototype.brake = function() {
+    this.speed = this.speed - 5
+    return this.speed
+}
+
+// Instantiate two objects
+const bmw = new Car('BMW', 120)
+const mercedes = new Car('Mercedes', 95)
+
+console.log(bmw)
+console.log(mercedes)
+
+console.log(bmw.accelerate())
+console.log(bmw.brake())
+ * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 7. ES6 Classes
+ * ----------------
+ * 
+ * - the modern way of implementing OOPs in JS | whereas syntax is different => there are two ways of implementing this... "Class Declaration" and "Class Expression"
+ * - as classes are similar to functions that's why we have two types of syntaxes: declaration and expression
+ * 
+ * Class Expression:
+ * ---
+const Person = class{...}
+ * 
+ * Class Declaration:
+ * ---
+class PersonCl{
+    constructor(firstName, birthYear) {     // add a constructor method in the Class: "PersonCl" | this takes 
+        this.firstName = firstName
+        this.birthYear = birthYear
+    } 
+}
+ * - add a method: constructor(param1, param2) | this works as a fn. and arguments passed to it will be taken as properties while creating instance from the class
+ * - when we create a new instance, constructor inside the class will be called and returns a new object with property values passed as arguments
+ * 
+ * ! Including Methods Inside a Class (Outside Constructor Fn. of That Class):
+ * ---
+class PersonCl{
+    constructor(firstName, birthYear) {
+        this.firstName = firstName
+        this.birthYear = birthYear
+    }
+
+    // Fn. declared here... are to be added on to the ".prototype" property of "PersonCl"
+    calcAge() {
+        return (new Date().getFullYear() - this.birthYear)
+    }
+}
+ * - the fns. that were declared inside a class and outside constructor fn. are taken into the prototypes of the objects (objects that will be created as instances from a class)
+ * - by this way the methods are created on the prototypes of the instances created from a class 
+ex: check out: 
+---
+console.log(vardhan.__proto__ === PersonCl.prototype)   // returns: true
+ * 
+ * - no need to use "PersonCl.prototype.methodName = function() {...}" to add methods to the prototype of the class we can simply declare them inside the class .. 
+ *   - we can also follow this: "PersonCl.prototype.methodName = function() {...}" 
+ * 
+ * ! Important Things to Know About Classes:
+ * ---
+ * 1. classes are NOT hoisted! 
+ * 2. just like functions, classes are also 1st- class citizens (which means that we can pass these classes into a fn. and return them from fns => cause classes are fs. BTS)
+ * 3. class body (all the code inside the class) executed each time in "STRICT mode"
  * 
  * 
  * 
- */
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+*/
