@@ -538,7 +538,6 @@ console.log(h1)
 
 DATA CAR 1: 'BMW' going at 120 km/h
 DATA CAR 2: 'Mercedes' going at 95 km/h
-
  * 
 // create a constructor fn. on the name of Car
 const Car = function(make, speed) {
@@ -617,18 +616,233 @@ console.log(vardhan.__proto__ === PersonCl.prototype)   // returns: true
  * 2. just like functions, classes are also 1st- class citizens (which means that we can pass these classes into a fn. and return them from fns => cause classes are fs. BTS)
  * 3. class body (all the code inside the class) executed each time in "STRICT mode"
  * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 8. Setters and Getters
+ * ------------------------
+ * ? 1. Getters and Setters in Objects:
+ * ---
+ * - every object in JS, can have setters and getter properties.. we call these special properties as "ACCESSOR PROPERTIES" (while other normal properties are "DATA" properties)
+ * - these are basically functions that get and set a value, but outside of the object .. they are used as properties
  * 
+ * ! we transform a method into a property using "get" and "set" keywords
  * 
+const account = {
+    owner: 'Harsha',
+    movements: [200, 300, 400, 500, 300],
+
+    // ACCESSOR PROPERTIES
+    get latest() {
+        return this.movements.slice(-1).pop()       // normal method with 'get' at the beginning
+    },
+
+    set latest(mov) {
+        this.movements.push(mov)        // normal method with 'set' at the beginning
+    }
+}
+console.log(account.latest) // returns: 300
+account.latest = 50         // setters can not be called as methods like this: "latest(50)"
  * 
+ * rules:
+ * ---
+ * - these can be called on an object with simply as a property name (without any parenthesis)
+ * - any setter method must have a parameter at least
  * 
+ * ? Getter and Setters in Classes:
+ * ---
+class PersonCl{
+    constructor(firstName, birthYear) {
+        this.firstName = firstName
+        this.birthYear = birthYear
+    }
+
+    calcAge() {
+        return (new Date().getFullYear() - this.birthYear)
+    }
+
+    // getter
+    get age() {
+        return (new Date().getFullYear() - this.birthYear)
+    }
+
+    // setters
+    set fullName(name) {
+        // console.log(name)
+        if(name.includes(' ')){
+            this._fullName = name
+        }
+        else {
+            alert(`${name} is not a full name!`)
+        }
+    }
+    get fullName() {
+        return this._fullName
+    }
+}
+const vardhan = new PersonCl('harsha vardhan', 2001)
+vardhan._fullName = 'Harsha Vardhan'
+console.log(vardhan)
  * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 9. Static Methods
+ * -------------------
+ * - static methods are attached to the constructor function itself, not to the prototype 
+ * ---
+ * Array.from() 
+ * => Array is the constructor function and from() is the static method
+ * ex:
+ * - Array.from(document.querySelectorAll('h1')) => returns: an array of all the 'h1' elements
+ * - However, we can not use from like this: [1, 3, 5].from() .. even [1, 3, 5] is an array 
  * 
+ * * So, here from() is attached to the entire 'Array Constructor' but not on the prototype of the Array Constructor, therefore all the arrays do not inherit this method
  * 
+ * ? Static Methods in Constructor Functions:
+ * ---
+const Person = function (name, birthYear) {
+
+    // instance properties
+    this.name = name
+    this.birthYear = birthYear
+}
+
+// adding a static method on to a cons. fn.
+Person.greet = function() {
+    console.log('Hey there! 👋')
+}
+
+// calling the static method from a cons. fn...
+Person.greet() // returns: Hey there! 👋
+
+// creating an instance and calling the static method on the instance... 
+const harsha = new Person ("Harsha", 2001)
+!!! harsha.greet() // returns an error: harsha.greet is not a function !!!
  * 
+ * ? Static Methods on Classes:
+ * ---
+class PersonCl{
+    constructor(firstName, birthYear) {
+        this.firstName = firstName
+        this.birthYear = birthYear
+    }
+
+    // instance methods
+    calcAge() {
+        return (new Date().getFullYear() - this.birthYear)
+    }
+
+    // static method
+    static greet() {
+        console.log('Hey there! 👋')
+    }
+}
+
+// calling the static method on the class itself
+PersonCl.greet() // returns: Hey there! 👋
+
+// creating an instance and calling the static method on the instance...
+const vardhan = new PersonCl('Harsha Vardhan', 2001)
+!!! vardhan.greet() // returns an error: vardhan.greet is not a function !!!
  * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 10. Object.create()
+ * ---------------------
+ * - we can use Object.create() to manually set a prototype of an object to any other object that we want!
  * 
+ * steps:
+ * 1. create a prototype object that would be the prototype for all the objects (we manually set prototype using: Object.create())
+ * 2. create a new object using that prototype object (using Object.create())
+ * 3. add properties to the new object (if needed!)
  * 
+const PersonProto = {
+    calcAge(){
+        return (new Date().getFullYear() - this.birthYear)
+    },
+}
+
+const steve = Object.create(PersonProto)
+steve.fullName = 'Steve Jobs'
+steve.birthYear = 1955
+
+console.log(steve)
+
+// without hardcoding the fullName and birthYear props... create a method which create an object with these props
+PersonProto.init = function(fullName, birthYear){
+    this.fullName = fullName
+    this.birthYear = birthYear
+}
+
+const stark = Object.create(PersonProto)
+stark.init('Tony Stark', 1970)
+
+console.log(stark)
+
+// check the prototype of object created: "steve" and PersonProto are equal or not?
+console.log(steve.__proto__ === PersonProto) // returns: true
  * 
+ * Summary:
+ * ---
+ * Automatic: 
+ * - with the constructor fn. new operator is used which automatically sets the prototype of the instances to the constructor's prototype property
+ * 
+ * Manual: 
+ * - we can set the prototype of an object manually using Object.create() method to any Object that we want
+ * 
+ * ? the prototype chains work exactly similar here, but the difference is that we don't need 'constructors' and 'classes'
+ * ? we need Object.create() to implement inheritance between classes !!!
+ * 
+ * Conclusion:
+ * ---
+ * - Object.create(): creates a new object and the prototype of the object will be the object that we passed as an argument to the Object.create()
+ * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 11. Coding Challenge #2
+ * -------------------------
+ * 
+1. Re-create challenge 1, but this time using an ES6 class;
+2. Add a getter called 'speedUS' which returns the current speed in mi/h (divide by 1.6);
+3. Add a setter called 'speedUS' which sets the current speed in mi/h (but converts it to km/h before storing the value, by multiplying the input by 1.6);
+4. Create a new car and experiment with the accelerate and brake methods, and with the getter and setter.
+
+DATA CAR 1: 'Ford' going at 120 km/h
+
+GOOD LUCK 😀
+ * ? -------------------------------------------------------
+class CarCl{
+    constructor(make, speed) {
+        this.make = make;
+        this.speed = speed;
+    }
+
+    // methods
+    accelerate() {
+        this.speed = this.speed + 10
+        return this.speed
+    }
+    brake() {
+        this.speed = this.speed - 5
+        return this.speed
+    }
+
+    // getter
+    get speedUS() {
+        return this.speed / 1.6
+    }
+
+    // setter
+    set speedUs(speed) {
+        this.speed = speed * 1.6 
+    }
+}
+// create an instance
+const ford = new CarCl('Ford', 120)
+
+// using getters
+console.log(ford.speedUS) // returns: 75
+
+// using setters
+ford.speedUs = 50
+console.log(ford) // returns: CarCl {make: "Ford", speed: 80}
+ * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  * 
  * 
  * 
