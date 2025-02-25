@@ -1,6 +1,12 @@
 //! !! OBJECT ORIENTED PROGRAMMING !!
 //? ---------------------------------
-
+/**
+ ** POINTS TO REMEMBER:
+ * ---
+ * - in a regular fn call, "THIS" keyword sets to 'undefined' (in strict mode) and to the global object (in non-strict mode)
+ * - 
+ * 
+ */
 /**
  * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  * ! 1. What is Object Oriented Programming?
@@ -13,7 +19,7 @@
  * - objects are self-contained pieces / blocks of code | where objects are building blocks of applications, which interact with each other
  * 
  * * The interactions between objects are made through a public Interface -> API - Application Programming Interface | 
- *   - methods inside this interface that is code outside of objects can access and communicate with the object
+ *   - the code outside of these objects can access and communicate with the object and methods inside the object (methods inside this interface)
  * 
  * - this paradigm was developed to organize the code to make it flexible and maintained easily
  * 
@@ -36,7 +42,7 @@ User {
     sendMessage(str) {.. logic ..}
 }
  * - here in the above ex., everything is packed {properties and methods} it just contains description of user-details but not the real-world data of the user (username not the value)
-* - using this class a new Object is constructed .. every object that was Constructed from a class which is called "INSTANCE" of that Class and process is called "INSTANTIATION"
+ * - using this class a new Object is constructed .. every object that was Constructed from a class which is called "INSTANCE" of that Class and process is called "INSTANTIATION"
  * 
 ex - instance: 
 ---
@@ -62,7 +68,7 @@ ex - instance:
     login (pwd) {.. login-logic ..}
     sendMessage (str) {.. logic ..}
 }
- * - Instance(s) is a real object(s) that was built from a class which now can be used in the code (as class is not an object)
+ * - Instance(s) is / are a real object(s) that was / were built from class(s) which now can be used in the code and (class is not an object)
  *   - this instance is like a real-house that will be built from a blueprint that was created .. so with the use of this same blueprint we can build as many objects as we can on our need
  * 
  * ? how do we create classes - at FIRST?
@@ -98,11 +104,11 @@ User {
     PRIVATE method1() {.. logic ..}     // .. as these methods were used inside the obj where it were declared but not outside of those classes 
 }
  * - this is an hypothetical example, as PRIVATE keyword does not exist in JS | 
-    - these properties with PRIVATE can not be accessible outside the obj where it was declared 
+    - these properties with PRIVATE can not be accessible by other code that is outside of the obj .. where it was declared 
     - however they can be accessible inside the class
  * - this prevents external environment to accidentally manipulate the internal PRIVATE properties / state
  * 
- * - In an API, all methods are not private they made public for interaction .. so API methods are not encapsulated
+ * * In an API, all methods are not private they made public for interaction .. so API methods are not encapsulated
  * 
  * ? Why Encapsulation?
  * ---
@@ -150,7 +156,7 @@ ex:
                                             private email
 
                                             // methods
-                                            login(pwd) {.. more-diff-login-logic ..}
+                                            ** login(pwd) {.. more-diff-login-logic ..}
                                             sendMessage(str) {.. logic ..}
                                         }
                                     /
@@ -164,7 +170,7 @@ ex:
                     private email
 
                     // methods
-                    login(pwd) {.. login-logic ..}
+                    ** login(pwd) {.. login-logic ..}
                     sendMessage(str) {.. logic ..}
                 }
             /
@@ -178,7 +184,7 @@ Admin {
     private email
 
     // methods
-    login(pwd, key) {.. diff-login-logic ..}         // extra params needed (key)
+    ** login(pwd, key) {.. diff-login-logic ..}         // extra params needed (key)
     sendMessage(str) {.. logic ..}
 }                        
  * 
@@ -186,7 +192,7 @@ Admin {
  * - as they (author & admin) inherits same LOGIN method from User (main) class .. so, how logic would change? 
  * ? HOW
  * ---
- * - in each inherited classes just write a new method .. which is also called 'LOGIN' - so, own 'LOGIN' method overwrites the method which was inherited from User class. 
+ * - in each inherited classes just write a new method .. which is also called 'LOGIN' - so, own 'LOGIN' method overwrites the one which was inherited from User class. 
  * 
  * 
  * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -211,13 +217,13 @@ Admin {
  *            Object
  * --
  * 1. all objects linked to a prototype obj; so that each obj has a prototype | 
- *   - prototype objects contains methods and properties so that all the objects linked to that prototype can access and use |
+ *   - prototype objects contains methods and properties so that all the objects linked to that prototype can get access and use them |
  *   - this behavior is called "PROTOTYPAL INHERITANCE"
  * 
  * ? PROTOTYPAL INHERITANCE:
  * - all the objects linked to a certain prototype object can use the methods and props that are defined on that prototype
  *   - objects inherit methods and props from a prototype, so this is why it is called "prototypal inheritance"
- * ? NOTE: prototypal - inheritance (which is an instance inheriting from a class) is different from class - inheritance (which is one class inheriting another class) 
+ * ? NOTE: prototypal inheritance (which is an instance inheriting from a class) is different from class - inheritance (which is one class inheriting another class) 
  * 
  * 2. Objects "delegate" behavior (methods) to the linked prototype object (behavior: term used to indicate methods)
  * - technically, objects delegate their behavior to the prototype
@@ -268,14 +274,14 @@ new Person ("Harsha", 2001)
  * BTS
  * ---
  * 1. new empty object is created "new {}"
- * 2. function is called, and 'this' keyword is set to newly created object => this = {} => 'this' points to new Object that was created
+ * 2. function is called, and 'this' keyword is set to newly created object => 'this' = {} => 'this' points to new Object that was created
  * 3. this created object is linked to a 'prototype' => {} linked to a prototype 
- * 4. NO NEED of RETURN statement inside the constructor fn. 'new' keyword take care of that and Object which was created is returned 'AUTOMATICALLY'
+ * 4. NO NEED of 'RETURN' statement inside the constructor fn. 'new' keyword take care of that and Object which was created is returned 'AUTOMATICALLY'
  * 
 const Person = function (name, birthYear) {
     console.log(this)                               // logging this to the console .. returns: "Person {}"
 }
-    here, as demonstrated 'this' pointed to the object - Person {} 
+    here, as described before 'this' pointed to the object - Person {} 
 --------------------------------------------------------------------------------------------------------------
  * ex
 const Person = function (name, birthYear) {
@@ -284,7 +290,7 @@ const Person = function (name, birthYear) {
 
     // NO NEED OF RETURN STATEMENT
 }
-const harsha = new Person ("Harsha", 2001)
+const harsha = new Person ("Harsha", 2001)          // 'new' takes care of returning the object
 console.log(harsha)                                 // returns: Person {name: 'Harsha', birthYear: 2001}
  * 
  * - "this.name" creates a property on the object that was returning from the "Person" constructor fn. (same with "this.birthYear")
@@ -296,7 +302,8 @@ console.log(harsha)                                 // returns: Person {name: '
  * ! as JS does not have classes before 'ES6' .. we used constructor fns. to create objects here .. so initially JS has 'constructor fns' to simulate 'classes'
  * 
  * ? so we can say that 'harsha' is an instance of 'Person' => `const harsha = new Person ("Harsha", 2001)`
- * - to check an object is an instanceof a cons. fn. or not ? we have an operator to check this! => clg(harsha instanceof Person) => returns: a boolean {true / false}
+ * - to check an object is an instanceof a cons. fn. or not? we have an operator to check this! 
+ *   => clg(harsha instanceof Person) => returns: a boolean {true / false}
  * - 'this.name' and 'this.birthYear' are the "instance properties"
  * 
 ---
@@ -315,15 +322,15 @@ const Person = function (name, birthYear) {
 }
 const harsha = new Person ("Harsha", 2001)
 console.log(harsha)
- *                          * this is a bad practice: to create direct method inside a cons.fn. cause if we created 100 or 1000s of objects 
- *                              * and all these objects would carry out this function .. and every time we create a new object would get this method => if we 100 objects.. we have 100 copies of same fns
+ *                          ! this is a bad practice: to create direct method inside a cons.fn. cause if we created 100 or 1000s of objects 
+ *                              * all these objects would carry out this function .. every time we create a new object would get this method => if we 100 objects.. we have 100 copies of same fns
  *                                  * so, we use prototype and prototypal inheritance to avoid this practice!
  * 
  * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  * ! 4. Prototypes
  * ---------------
  * Intro:
- * - Each and every fn. in JS has already a property called "Prototype".. so, each object created from a cons.fn. has access to all methods and props (that we define on constructors prototype property)
+ * - Each and every fn. in JS has already a property called "Prototype".. so, each object created from a cons.fn. has access to all methods and props (that we define on constructor's prototype property)
  *   - all the objects that are created with cons. fn. will inherit, and gets access to all the methods and props that are defined on this proto prop
  * 
  * ! Adding method to Prototype Property:                                               # IMPLEMENTING BASIC PROTOTYPAL INHERITANCE
@@ -336,7 +343,7 @@ const Person = function (name, birthYear) {
 }
 
 // setting a methods to prototype property as "Person.prototype.methodName = function () {...}"
-// as "Person.prototype" is an Object .. so we can add methods to this object
+// as "Person.prototype" is an Object .. so we can add methods to this object .. using (dot) notation
 ---
 Person.prototype.calcAge = function(){
     return (new Date().getFullYear() - this.birthYear);
@@ -347,6 +354,8 @@ Person.prototype.calcAge = function(){
 const harsha = new Person ("Harsha", 2001)
 console.log(harsha.calcAge())
  * 
+        clg(harsha) => returns: Person {name: 'Harsha', birthYear: 2001} // no calcAge method is visible here
+                                        ⬇️
  * - after logging the object "harsha" to the console, we can see that there is no method called "calcAge" on the object .. but we can still call this method on the object
  * - this is because the object "harsha" has access to the method that was defined on the prototype property of the constructor function .. this is "PROTOTYPAL INHERITANCE"
  * 
@@ -368,7 +377,7 @@ console.log(harsha.calcAge())
  * ! SHOULDN'T PERSON.PROTOTYPE BE THE PROTOTYPE OF PERSON (in Person.prototype => the prototype here, is not the prototype of the constructor fn.: Person)
  * ? no, it is not the prototype of Person!!! but it is the prototype of all the objects that are created with the Person constructor fn.
  * ? CONFIRMED-1: harsha.__proto__ === Person.prototype => {returns: true}
- * ? CONFIRMED-2: clg (Person.prototype.isPrototypeOf(Person)) => {returns: false} => here, isPrototypeOf() used to check if the prototype of the object is the prototype of the constructor fn. or not
+ * ? CONFIRMED-2: clg (Person.prototype.isPrototypeOf(Person)) => {returns: false} (here, isPrototypeOf() used to check if the prototype of the object is the prototype of the constructor fn. or not)
  * 
  * ! Where does the "__proto__" come from for a Object: harsha?
  * ---
@@ -414,10 +423,10 @@ Person {name: 'Harsha', birthYear: 2001}
  *   - visible under __proto__ object of the object that will be created 
  * 
  * * to check own properties of an object created from a constructor function
- * - use "".hasOwnProperty()""
+ * - use ".hasOwnProperty()"
 ex: 
 console.log(harsha.hasOwnProperty('name'))  // returns: true
-console.log(harsha.hasOwnProperty('species'))   // returns: false
+console.log(harsha.hasOwnProperty('species'))   // returns: false 
  * 
  * - species property is not inside of the object 'harsha', it has access to it on "__proto__" because of it's prototype
  * 
@@ -454,7 +463,7 @@ console.log(harsha.hasOwnProperty('species'))   // returns: false
  * NOTE:
  *   - this whole process just works with 'Constructor Functions' and 'ES6 Classes' but not with 'Object.create()' syntax
  *  
- * * every time we call Object.someMethod(), JS looks for that fn. on the Object if it is not defined inside the Object, then it looks for it into it's prototype / __proto__
+ * * every time we call 'ObjectName'.someMethod() (ObjectName: "harsha" that is created from a class / cons.fn.), JS looks for that fn. on the Object if it is not defined inside the Object, then it looks for it into it's prototype / __proto__
  * * getting access of methods and props from a prototype is called "PROTOTYPAL INHERITANCE / DELEGATION" (... simply an object inherited / delegated a behavior / method to it's prototype ...)
  * 
  * ! Prototype Chain:
@@ -480,7 +489,7 @@ harsha.hasOwnProperty('name')
 
  * ? Searching For hasOwnProperty() a Built-in Method:
  * ---
-- JS, tries to find "hasOwnProperty()" method on the Object: 'harsha' itself (but JS cannot find this method on the Object created)
+- JS, tries to find "hasOwnProperty()" method on the Object: 'harsha' itself (but JS cannot find this method on the Object created) if it cannot find it there ..
     - so it looks for "hasOwnProperty()" on it's __proto__ that is: "Person.prototype" if it cannot find there .. 
         - then it searches inside the __proto__ of Person.prototype and definitely finds there which is the top level of the chain that is: "Object.prototype" 
 
@@ -524,7 +533,7 @@ console.log(arr.unique()) // returns: (6) [3, 4, 6, 7, 5, 9]
 
 // select an element, h1
 const h1 = dom.querySelector('h1')
-console.log(h1)
+console.dir(h1)
  * - with this we can see different levels of prototypes of elements on DOM tree
  * 
  * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -608,7 +617,7 @@ ex: check out:
 console.log(vardhan.__proto__ === PersonCl.prototype)   // returns: true
  * 
  * - no need to use "PersonCl.prototype.methodName = function() {...}" to add methods to the prototype of the class we can simply declare them inside the class .. 
- *   - we can also follow this: "PersonCl.prototype.methodName = function() {...}" 
+ *   - we can also follow this as well: "PersonCl.prototype.methodName = function() {...}"
  * 
  * ! Important Things to Know About Classes:
  * ---
@@ -650,8 +659,8 @@ account.latest = 50         // setters can not be called as methods like this: "
  * ? Getter and Setters in Classes:
  * ---
 class PersonCl{
-    constructor(firstName, birthYear) {
-        this.firstName = firstName
+    constructor(fullName, birthYear) {
+        this.fullName = fullName
         this.birthYear = birthYear
     }
 
@@ -688,12 +697,13 @@ console.log(vardhan)
  * - static methods are attached to the constructor function itself, not to the prototype 
  * ---
  * Array.from() 
+ * ---
  * => Array is the constructor function and from() is the static method
  * ex:
  * - Array.from(document.querySelectorAll('h1')) => returns: an array of all the 'h1' elements
  * - However, we can not use from like this: [1, 3, 5].from() .. even [1, 3, 5] is an array 
  * 
- * * So, here from() is attached to the entire 'Array Constructor' but not on the prototype of the Array Constructor, therefore all the arrays do not inherit this method
+ * * So, here from() is attached to the entire 'Array Constructor' but not on the prototype of the Array Constructor, therefore all normal arrays do not inherit this method
  * 
  * ? Static Methods in Constructor Functions:
  * ---
@@ -843,6 +853,407 @@ ford.speedUs = 50
 console.log(ford) // returns: CarCl {make: "Ford", speed: 80}
  * 
  * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 12. Inheritance Between "Classes": Constructor Functions
+ * ----------------------------------------------------------
+ * Intro: 
+ * - Here, we implement a real inheritance between classes using cons.fn. (but real classes do not exist in JS)
+ *   - So, we create a STUDENT class that inherits from the PERSON class .. where STUDENT is also a PERSON but a SPECIFIC one
+ * 
+ * - Here, with class inheritance.. the prototype of the Student fn is same as the prototype of the Person fn.
+ *   - so that all instances of Student Class can get access to the methods and props of Person's Class Prototype .. through the prototype chain
+ * 
+ * - So, we need to do the Person.prototype to be the prototype of Student.prototype.. to link these 2 prototype objects we use Object.create()
+ *   - ex: Student.prototype = Object.create(Person.prototype)
+ * 
+ * - here, we didn't use "Student.prototype = Person.prototype" cause it does not create a prototype chain
+ *   - here we want Person prototype to be inherited by Student but should not be the exact same object and that is why we needed "Object.create()"
+ * 
+// ! Create 'Person' Class
+// ---
+const Person = function(firstName, birthYear) {
+    this.firstName = firstName
+    this.birthYear = birthYear
+}
+Person.prototype.calcAge = function() { 
+    return (new Date().getFullYear() - this.birthYear)
+}
+
+// ! Creating a 'Student' Class (CHILD)
+// ---
+const Student = function(firstName, birthYear, course) {    // additional properties, as remaining properties are inherited from Person constructor (class)
+
+    // this.firstName = firstName
+    // this.birthYear = birthYear       
+// ? this type of code violates "DRY principle" as the same props got repeated in both PERSON and STUDENT constructors
+
+    // Person(firstName, birthYear)     
+// ? Instead, we call Person() but it would be a normal fn. call and "THIS" keyword sets to undefined (in strict mode)
+// ? does not work => returns: Uncaught TypeError: Cannot set property 'firstName' of undefined
+
+// ? Instead, we have to manually set 'THIS' keyword to the 'PERSON' class: 
+// ? we use call() on Person fn. call and set THIS keyword manually inside the Person fn. 
+    // ! Person.call(this, firstName, birthYear)     
+// ? manually set THIS keyword by using call() method which sets THIS keyword to the object that is calling the function
+    this.course = course
+}
+
+// - Linking Prototypes
+// Student.prototype = Object.create(Person.prototype)
+
+// - creating a new method on to the prototype of Student class
+Student.prototype.introduce = function() {
+    return(`Hi! My name is ${this.firstName} and I got enrolled into ${this.course}`)
+}
+
+// - creating an instance using Student class
+const mike = new Student('Mike', 2001, 'Mechanical Engineering')
+console.log(mike.introduce())
+
+// - JS looks for calcAge() on Student's Object: Mike's Prototype .. if JS don't find there it looks in higher levels that is it can reach up from Student's prototype to Person's prototype.. this is how exactly prototype chain works in JS
+// console.log(mike.calcAge())
+
+// - I did not understand this!
+Student.prototype.constructor = Student
+console.dir(Student.prototype.constructor)
+ * 
+ * 
+ * ! Connection of Two Classes! Rules to be Followed:
+ * ---
+ * ? 1. There must be a 'PARENT' class, and create a CHILD class which must contain some properties that must be inherited from the PARENT later!
+ * ?    - while inheriting from parent.. use ".call()" to attach this on to the class 
+ * ? 2. The prototypes of CHILDREN and PARENT must be connected through "Object.create({..Type: Object..})" 
+ * ?    - .create() takes an Object type which CAN be a prototype
+ * 
+ * ? 3. THE STEP I DID NOT UNDERSTAND !!! THIS HAS TO BE FOLLOWED !!!
+Student.prototype.constructor = Student
+console.dir(Student.prototype.constructor)
+ * 
+ * ! REMEMBER: 
+ * !!! POLYMORPHISM ALERT !!!
+ * ! when there are same methods on PARENT & CHILD levels then the 1st appeared method will be taken for execution.. (the other will be overwritten) 
+ * 
+ * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 13. Coding Challenge #3
+ * -------------------------
+ * 
+1. Use a constructor function to implement an Electric Car (called EV) as a CHILD "class" of Car. Besides a make and current speed, the EV also has the current battery charge in % ('charge' property);
+2. Implement a 'chargeBattery' method which takes an argument 'chargeTo' and sets the battery charge to 'chargeTo';
+3. Implement an 'accelerate' method that will increase the car's speed by 20, and decrease the charge by 1%. Then log a message like this: 'Tesla going at 140 km/h, with a charge of 22%';
+4. Create an electric car object and experiment with calling 'accelerate', 'brake' and 'chargeBattery' (charge to 90%). Notice what happens when you 'accelerate'! HINT: Review the definiton of polymorphism 😉
+
+DATA CAR 1: 'Tesla' going at 120 km/h, with a charge of 23%
+ * 
+// --- Car Class --- PARENT
+// create a constructor fn. on the name of Car
+const Car1 = function(make, speed) {
+    this.make = make
+    this.speed = speed
+}
+
+// create a prototype: accelerate on constructor fn.
+Car1.prototype.accelerate = function(){
+    this.speed = this.speed + 10
+    return this.speed
+}
+
+Car1.prototype.brake = function() {
+    this.speed = this.speed - 5
+    return this.speed
+}
+
+// --- EV Class --- CHILD
+const EV = function(make, speed, charge) {
+    Car1.call(this, make, speed)
+    this.charge = charge
+}
+
+// connecting the prototypes ... use: Object.create()
+EV.prototype = Object.create(Car1.prototype)
+
+// creating new method: 'chargeBattery' on to the CHILD(EV) Class
+EV.prototype.chargeBattery = function(chargeTo) {
+    this.charge = chargeTo
+} 
+
+// !!! POLYMORPHISM !!! 'accelerate' method: car's speed +20, charge -1%. 
+EV.prototype.accelerate = function() {
+    this.speed = this.speed + 20
+    this.charge = this.charge - 1
+    console.log(`${this.make} EV is going at ${this.speed} with a charge of ${this.charge}`)
+}
+
+console.dir(EV)
+
+// creating an instance from EV..
+const tesla = new EV('Tesla', 120, 23)
+console.log(tesla)
+
+// test: methods
+tesla.chargeBattery(90)
+tesla.accelerate()
+ * 
+ * ! REMEMBER: 
+ * !!! POLYMORPHISM ALERT !!! -> (at accelerate method)
+ * ! when there are same methods on PARENT & CHILD levels then the 1st appeared method will be taken for execution.. (the other will be overwritten) 
+ * 
+ * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 14. Inheritance Between Classes: Using 'ES6 Classes'
+ * ------------------------------------------------------
+ * 
+ * - to inherit from Person class using ES6 classes we need 2 keywords: EXTENDS, SUPER
+ * 1. Extends UseCase: 
+ *   - class StudentCl extends PersonCl {...} 
+ * 2. Super UseCase: 
+ *   - super() fn: is a replacement for .call(this, param1, param2) where param1, param2 .. must be same as the properties of PARENT class
+ *   - this is a constructor fn. for PARENT inside CHILD class which is for declaring properties inside CHILD that were to be inherited from PARENT!
+ * 
+ * ! Rules:
+ * ---
+ * 1. super() must happen at 1st inside the constructor() of a 'PARENT' class
+ *   - after that super() fn call we have to declare other properties and methods
+ * 
+class PersonCl{
+    constructor(fullName, birthYear) {
+        this.fullName = fullName;
+        this.birthYear = birthYear;
+    }
+
+    // Instance Methods
+    calcAge() {
+        return new Date().getFullYear() - this.birthYear
+    }
+
+    greet() {
+        return `Hi, my name is ${this.fullName}`
+    }
+
+    get age() {
+        return new Date().getFullYear() - this.birthYear
+    }
+
+    set fullName(name) {
+        if (name.includes(' ')){
+            this._fullName = name
+        }
+        else{
+            alert(`${name} is not a full-name`)
+        }
+    }
+
+    get fullName(){
+        return this._fullName
+    }
+
+    // static methods
+    static hey() {
+        return `Hey there! 👋`
+    }
+}
+
+// Demonstration: If we do not need extra properties, we do not need constructor function at all inside CHILD
+// ---
+class StudentCl extends PersonCl {}         // this creates a new Student Class: StudentCl which is an extended version of Parent class: PersonCl
+
+const eren = new StudentCl('Eren Yeager', 2001)
+console.log(eren)                                           // * returns: StudentCl {_fullName: 'Eren Yeager', birthYear: 2001}
+
+// when extra properties are needed on a CHILD class
+// ---
+class StudentCl extends PersonCl{
+    constructor(fullName, birthYear, course) {
+        super(fullName, birthYear)                                              // ! Always to happened 1st !
+        this.course = course                                                    // Extra Properties
+    }
+
+    // defining methods
+    introduce() {
+        console.log(`Hi! My name is ${this.fullName} and I enrolled into ${this.course} course`)
+    }
+
+    //! OVERRIDE alert: calcAge() is already defined inside Parent of StudentCl and that will be OverRode
+
+}
+const eren = new StudentCl('Eren Yeager', 2001, 'Genocide')
+console.log(eren)                                           // * returns: StudentCl {_fullName: 'Eren Yeager', birthYear: 2001}
+ * 
+ * 
+ * ! if there are same methods inside both Parent and Child classes .. then the method which appears 1st in the prototype chain is executed 1st when called! => this is the process of OVERRIDING the method coming from parent class 
+ * 
+ * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 15. Inheritance Between Classes: using 'Object.create()'
+ * ---------------------------------------------------------
+ * 
+// ? Initializing an Object that mocks as a prototype for it's CHILD Classes and also for instances / objects created from that respective prototype
+const PersonProto = {
+    calcAge() {
+        console.log(new Date().getFullYear() - this.birthYear)
+    }, 
+
+    init(firstName, birthYear) {
+        this.firstName = firstName;
+        this.birthYear = birthYear;
+    }
+}
+
+// ? 1st Level: creating a Child class: 'StudentProto' from Parent class: 'PersonProto' => relationship between Parent and Child classes
+const StudentProto = Object.create(PersonProto)
+
+// ? if we want more properties.. create a method inside StudentProto which is 'init()'
+StudentProto.init = function(firstName, birthYear, course) {
+
+// * INHERITANCE of Properties / Methods from PersonProto object and setting 'this' keyword manually on to the 'PersonProto' class
+    PersonProto.init.call(this, firstName, birthYear)
+    this.course = course
+}
+
+// ? initializing new method on to StudentProto which will be inherited by objects that will be created from æStudentProto'
+StudentProto.introduce = function () {
+    console.log(`Hi! My name is ${this.firstName} and I enrolled into ${this.course} course`)
+}
+
+// ? 2nd Level: creating instances: objects "mark" a student from ChildClass: StudentProto
+const mark = Object.create(StudentProto)
+
+// ? assigning properties
+mark.init('Mark Zuckerberg', 2001, 'Computer Science')
+
+console.log(mark)
+ *
+ * ! at 1st Level: with Object.create() we just built a relationship between ParentClass: PersonProto and ChildClass: StudentProto
+ * ! at 2nd Level: again we have to use Object.create() which creates Instances / Objects from ChildClass: StudentProto 
+ * 
+ * ! COMMENTS:
+ * - by using Object.create(), we have no worries of Constructors Functions and ES6 Classes
+ * - this pattern is lot better than trying to mock classes that look like adopted from other languages like: Java, C++ etc., (basically faking classes)
+ * - using this we are linking classes together which serve as the prototype of each other classes and instances
+ * 
+ * ! NOTE: Mostly we have been using ES6 classes now-a-days .. so from now on we will be using ES6 classes !!!
+ * 
+ * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 15. Another Example using ES6 Classes
+ * ---------------------------------------
+ * ? here we have used an example that we used earlier that is BANKIST application!
+ * 
+ * - so, basically in this we are creating a new Class 'Account' with properties: owner(Owner of the Account), currency, pin, movements(deposits and withdrawals), etc.,
+ * - with movements we have to include an array inside of the class and which contains both deposits(+) and withdrawals(-)
+ *   - we can pass 'movements' as an array inside the constructor fn like shown as following:
+ * 
+ * 
+ * 
+// way-1
+--------
+constructor(param1, param2, param3, movements) {
+    this.param1 = param1
+    ... (for other parameters)
+    this.movements = movements      //? this can be passed as an argument while creating an instance with 'new' operator
+}
+// way-2                        => //! without passing a new array every time a "new Account" created.. we just assign an empty array by default
+--------
+constructor(param1, param2, param3) {
+    this.param1 = param1
+    ...
+    this.movements = []
+    this.locale = navigator.language
+
+}
+ * 
+ * 1. to deposit: 
+ *   - we have to push a positive value that is: ".push(value)" which pushes onto the movements array
+ * 2. to represent withdrawals: 
+ *   - we have to push a negative value that is: ".push(-value)" into the movements array
+ * 
+ * ex: Instance.movements.push(100)     //! here movements array is directly used for interactions which is not a good practice!
+ *! - Instead of interacting with properties directly we have to use methods .. deposit(val) and withdraw(val) .. which looks more realistic and operational
+ * 
+ * - these methods: deposit(val) and withdraw(val) 
+ *   - the interface to our object a "public interface" acts like an 'API'
+ * 
+ * !------------------
+ * !ABSTRACTION ALERT!
+ * ---
+ * - here in below snippet, 'withdraw' method abstracts / shadows the functionality of pushing a negative value into an array
+ * - simply, user can use 'withdraw(100)': but BTS the code will push '-100' into the movements array (which avoids the usage of code: ".push(-100)")
+--- 
+//! API: Public Interface of an Object
+deposit(val) {
+    this.movements.push(val)
+}
+withdraw(val){
+    this.deposit(-val)                  //! calling a method inside another using 'this' keyword
+} 
+ * 
+ * - even after all of these any user can interact directly with movements array and can push any value into it which is not a good practice
+ * - and can interact with the 'pin' outside the account set by the user (which is private data! and shall not be accessed outside of the class)
+ * 
+ *
+ *! even with the functionality: requestLoan()
+---
+approveLoan(val) {
+    return true;                //! Skipping the approval process
+}
+requestLoan(val) {
+    if(this.approveLoan(val)) {
+        this.deposit(val)
+        console.log(`Loan approved: ${val}`)
+    }
+}
+ * in public interface, we only need requestLoan() method and not approveLoan() method .. as approveLoan() must be PRIVATE and accessed through internally
+ * that is ..
+ * harshaAcc.requestLoan(1000) ✅
+ * but not harshaAcc.approveLoan(1000) ❌ 
+ * 
+ * - in real world, this shall not be allowed outside the class
+ *
+ * ! TO AVOID THIS WE NEED TO USE 'ENCAPSULATION' and 'DATA PRIVACY'!!! 
+ *  - which is the next topic to be discussed
+ * 
+ * CODE SNIPPET:
+ * ---
+// - create an 'Account' Class
+class Account{
+    constructor(owner, currency, pin) {
+        this.owner = owner
+        this.currency = currency
+        this.pin = pin
+        this.movements = []                                     //! resembles default property without depending upon input/args when every time a new Account is created 
+        this.locale = navigator.language                        //! resembles default property
+    }
+
+    // creating deposit and withdraw methods
+    //! API: Public Interface of an Object
+    deposit(val) {
+        this.movements.push(val)
+    }
+    withdraw(val){
+        this.deposit(-val)                  //! calling a method inside another using 'this' keyword
+    } 
+}
+
+// - create an instance
+const harshaAcc = new Account('Harsha', '$', 1111)              //! returns: Account {owner: 'Harsha', currency: '$', pin: 1111, movements: Array(0), locale: 'en-IN'}
+
+console.log(harshaAcc)
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  * 
  * 
  * 
