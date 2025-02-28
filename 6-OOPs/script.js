@@ -217,7 +217,6 @@ GOOD LUCK 😀
 
     // - Instead, we manually set THIS keyword to the PERSON function: 
     // - we use call() on Person fn. call and set THIS keyword manually inside the Person fn. 
-    // - manually set THIS keyword by using call() method which sets THIS keyword to the object that is calling the function
     // Person.call(this, firstName, birthYear)     
     // this.course = course
 // }
@@ -363,34 +362,34 @@ GOOD LUCK 😀
 // ---
 
 // Initializing an Object that mocks as a prototype for children and also for instances created from that respective object
-const PersonProto = {
-    calcAge() {
-        console.log(new Date().getFullYear() - this.birthYear)
-    }, 
+// const PersonProto = {
+//     calcAge() {
+//         console.log(new Date().getFullYear() - this.birthYear)
+//     }, 
 
-    init(firstName, birthYear) {
-        this.firstName = firstName;
-        this.birthYear = birthYear;
-    }
-}
+//     init(firstName, birthYear) {
+//         this.firstName = firstName;
+//         this.birthYear = birthYear;
+//     }
+// }
 
 // creating a Child class: 'StudentProto' from Parent class: 'PersonProto'
-const StudentProto = Object.create(PersonProto)
+// const StudentProto = Object.create(PersonProto)
 
 // if we want more properties.. create a method inside StudentProto which is 'init()'
-StudentProto.init = function(firstName, birthYear, course) {
+// StudentProto.init = function(firstName, birthYear, course) {
 
     // INHERITANCE: Properties / Methods from PersonProto and setting this keyword manually on to the 'PersonProto' class
-    PersonProto.init.call(this, firstName, birthYear)
-    this.course = course
-}
+//     PersonProto.init.call(this, firstName, birthYear)
+//     this.course = course
+// }
 
-StudentProto.introduce = function () {
-    console.log(`Hi! My name is ${this.firstName} and I enrolled into ${this.course} course`)
-}
+// StudentProto.introduce = function () {
+//     console.log(`Hi! My name is ${this.firstName} and I enrolled into ${this.course} course`)
+// }
 
-const mark = Object.create(StudentProto)
-mark.init('Mark Zuckerberg', 2001, 'Computer Science')
+// const mark = Object.create(StudentProto)
+// mark.init('Mark Zuckerberg', 2001, 'Computer Science')
 
 // console.log(mark)
 // mark.introduce()
@@ -398,35 +397,162 @@ mark.init('Mark Zuckerberg', 2001, 'Computer Science')
 
 // ! another class example
 // ---
-class Account{
-    constructor(owner, currency, pin) {
-        this.owner = owner
-        this.currency = currency
-        this.pin = pin
-        this.movements = []
-        this.locale = navigator.language
-        // console.log(`Thanks for opening an account with our bank ${this.owner}`)     //! we can execute an expression while creating a 'new Class'
+// class Account{
+
+//     locale = navigator.language;            //! public field
+//     bank = 'ABC Bank';              // this is same as - creating: this.bank = 'ABC Bank' in constructor
+
+//     #movements = [];        //! private field
+//     #pin;
+
+//     constructor(owner, currency, pin) {
+//         this.owner = owner
+//         this.currency = currency
+//         this.#pin = pin
+//     }
+
+//     getMovements() {
+//         return [...this.#movements]
+//     }  
+//     deposit(val) {
+//         this.#movements.push(val)
+//         return this
+//     }
+//     withdraw(val){
+//         this.deposit(-val)
+//         return this
+//     }
+
+//     #approveLoan(val) {
+//         return true;            //! Skipping the approval process (logic)
+//     }
+//     requestLoan(val) {
+//         if(this.#approveLoan(val)) {
+//             this.deposit(val)
+//             console.log(`Loan approved: ${val}`)
+//         }
+//         return this
+//     }
+// }
+
+// const harshaAcc = new Account('Harsha', '$', 1111)
+
+// harshaAcc.deposit(250)
+// harshaAcc.withdraw(140)
+// harshaAcc.deposit(300)
+
+// harshaAcc.getMovements().push(250)
+// console.log(harshaAcc)
+
+
+// class Person{
+//     constructor(firstName, birthYear) {
+//         this.firstName = firstName
+//         this.birthYear = birthYear
+//     }
+// }
+
+// class Student extends Person{
+//     university = 'IIT';
+//     #studyHours = 0;
+//     #course;
+//     static numSubjects = 12;
+
+//     constructor(firstName, birthYear, startYear, course) {
+//         super(firstName, birthYear)
+//         this.startYear = startYear
+//         this.#course = course
+//     }
+
+//     introduce() {
+//         console.log(`Hi! I am ${this.firstName} and I enrolled into ${this.#course} at ${this.university}`)
+//     }
+
+//     #makeCoffee() {
+//         console.log('Here is the coffee you asked for!')
+//     }
+//     study(h) {
+//         this.#makeCoffee()
+//         this.#studyHours = this.#studyHours + h
+//         return this.#studyHours
+//     }
+
+//     get testScore() {
+//         return this._testScore
+//     }
+//     set testScore(score) {
+//         this._testScore = score
+//     }
+
+//     static printCurriculum() {
+//         console.log(`There are ${this.startYear} subjects in the curriculum`)
+//     }
+// }
+
+// Student.printCurriculum()
+
+// const harsha = new Student('Harsha', 2001, 2020, 'Mechanical Engineering');
+// harsha.introduce()
+// console.log(harsha.study(5))
+
+
+// Coding Challenge #4
+// ---
+// 1. Re-create challenge #3, but this time using ES6 classes: create an 'EVCl' child class of the 'CarCl' class
+// 2. Make the 'charge' property private;
+// 3. Implement the ability to chain the 'accelerate' and 'chargeBattery' methods of this class, 
+//      and also update the 'brake' method in the 'CarCl' class. They experiment with chining!
+
+// DATA CAR 1: 'Ferrari' going at 120 km/h, with a charge of 23%
+
+class CarCl {
+    constructor(make, speed) {
+        this.make = make;
+        this.speed = speed;
     }
 
-    // creating deposit and withdraw methods
-    deposit(val) {
-        this.movements.push(val)
+    // methods
+    accelerate() {
+        this.speed = this.speed + 10
+        return this.speed
     }
-    withdraw(val){
-        this.deposit(-val)
+    brake() {
+        this.speed = this.speed - 5
+        console.log(`${this.make} is going at ${this.speed}`)
+        return this
     }
 
-    approveLoan(val) {
-        return true;                //! Skipping the approval process
+    // getter
+    get speedUS() {
+        return this.speed / 1.6
     }
-    requestLoan(val) {
-        if(this.approveLoan(val)) {
-            this.deposit(val)
-            console.log(`Loan approved: ${val}`)
-        }
+
+    // setter
+    set speedUs(speed) {
+        this.speed = speed * 1.6
     }
 }
 
-const harshaAcc = new Account('Harsha', '$', 1111)
+class EVCl extends CarCl{
+    #charge;
+    constructor(make, speed, charge){
+        super(make, speed)
+        this.#charge = charge
+    }
 
-console.log(harshaAcc)
+    chargeBattery (chargeTo) {
+        this.#charge = chargeTo
+        return this
+    } 
+
+    accelerate() {
+        this.speed = this.speed + 20
+        this.#charge = this.#charge - 1
+        console.log(`${this.make} EV is going at ${this.speed} with a charge of ${this.#charge}`)
+        return this
+    }
+}
+const ferrari = new EVCl('Ferrari', 120, 23)
+console.log(ferrari)
+
+ferrari.accelerate().accelerate().accelerate().brake().chargeBattery(50).accelerate()

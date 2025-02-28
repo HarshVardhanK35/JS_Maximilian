@@ -1202,9 +1202,8 @@ requestLoan(val) {
     }
 }
  * in public interface, we only need requestLoan() method and not approveLoan() method .. as approveLoan() must be PRIVATE and accessed through internally
- * that is ..
- * harshaAcc.requestLoan(1000) ✅
- * but not harshaAcc.approveLoan(1000) ❌ 
+ * that is .. harshaAcc.requestLoan(1000) ✅
+ * but not .. harshaAcc.approveLoan(1000) ❌ 
  * 
  * - in real world, this shall not be allowed outside the class
  *
@@ -1239,22 +1238,311 @@ const harshaAcc = new Account('Harsha', '$', 1111)              //! returns: Acc
 console.log(harshaAcc)
  * 
  * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 16. Encapsulation: Private Class Fields and Methods
+ * -----------------------------------------------------
+ * ? Encapsulation:
+ * ---
+ * - this is to keep some props and methods private inside the class and making sure those are not accessible from outside the class
+ * - this is required so that outside code will not able to manipulate the data inside a class
+ * 
+ * - in other languages other than JS where OOPs are used we call properties in JS as "FIELDS" in other languages, so JS has also introduced "Private Class Fields" ib ES2022
+ * - with these private class fields we can implement encapsulation in JS! (in this way, we are forcing class based pattern into JS this turns prototype based language to class based lang to look like Java or C++)
+ * 
+ * - upto now we have these below types in classes of JS:
+ * 1. PUBLIC fields
+ * 2. PRIVATE fields
+ * 3. PUBLIC methods
+ * 4. PRIVATE methods
+ * 5. STATIC version of all the above
+ * 
+ * - 1st: what is a field? => field is like a property that is on all class instances .. 
+ *   - we can declare everything as a field that want to be present on all instances but not on the prototypes .. these will not be inherited by the instances
+ * 
+ * ! To create these FIELDS
+ * ---
+ * 1. PUBLIC fields:
+ * ---
+ * - those fields that must be on every instance of the class but not on the prototype .. (bank = 'ABC Bank' => this has to a common on every instance!)
+ *  ? - declaration: placed outside a constructor() of a class 
+ * 
+ * 2. PRIVATE fields: 
+ * ---
+ * - those must not be manipulated from outside of the class and not be accessed outside of a class where it was declared ..
+ *   - ex: movements.. that has to be manipulated through another method (either deposit or withdraw or some other) but not direct manipulation
+ *   - should not be acc1.movements = [] (this is not a good practice)
+ *  ? - declaration: starts with a '#' symbol also outside the constructor() of that class
+ * 
+ * - after declaring private fields, those cannot be accessed from outside but can be within the class
+ * 
+ * ! Note:
+ * - till now every field that was declared outside constructor() of a class is not dependent on the parameters of the constructor
+ * - if a field is dependent on the parameters of the constructor then it has to be declared outside the constructor() of that class with '#fieldName1' ..
+ *  -  assigned with a value inside constructor based on the parameters passed to the constructor
+ *   - same like variable declared with 'let'  
+ * 
+ * 3. PUBLIC methods:
+ * ---
+ * - these are the methods that are accessible from outside of the class and can be called from outside of the class like a public interface (API)
+ * 
+ * 4. PRIVATE methods:
+ * ---
+ * - declared same as public methods but with '#' symbol at the beginning of the method name
+ * - so we change the method 'approveLoan()' - which has to be a private method and cannot be accessed by the end-user
+ * ex: #approveLoan(val) {...} => so, we cannot execute this method from outside of the class => harshaAcc.#approveLoan(1000) ❌
+ * 
+ * 5. STATIC versions of all the above:
+ * ---
+ * - these implementation has been skipped, as these are accessed with the classes itself but not with the instances 
+ *  - (as these static methods are not attached to prototype hence these are not inherited!)
+ * - similar to every filed and method declaration, but with static keyword at the beginning
+ * 
+code:
+-
+class Account{
+
+    //! PUBLIC fields
+    locale = navigator.language;
+    bank = 'ABC Bank';              // this is same as - creating: this.bank = 'ABC Bank' in constructor
+
+    //! PRIVATE fields
+    #movements = [];       
+    #pin;
+
+    constructor(owner, currency, pin) {
+        this.owner = owner
+        this.currency = currency
+
+        //! pin dependent on the parameter declared in the constructor
+        this.#pin = pin
+    }
+
+    //! PUBLIC METHODS
+    getMovements() {
+        return [...this.#movements]
+    }  
+    deposit(val) {
+        this.#movements.push(val)
+    }
+    withdraw(val){
+        this.deposit(-val)
+    }
+
+    //! PRIVATE METHODS
+    #approveLoan(val) {
+        return true;            //! Skipping the approval process (logic)
+    }
+    requestLoan(val) {
+        if(this.#approveLoan(val)) {
+            this.deposit(val)
+            console.log(`Loan approved: ${val}`)
+        }
+    }
+
+    //! STATIC METHODS: PUBLIC
+    static test() {
+        console.log('Test')
+    }
+                                    //? these static methods can be accessed on the class not on the instance
+    //! STATIC METHODS: PRIVATE
+    static #test() {
+        console.log('Test')
+    }
+}
+
+const harshaAcc = new Account('Harsha', '$', 1111)
+
+harshaAcc.deposit(250)
+harshaAcc.withdraw(140)
+harshaAcc.deposit(300)
+
+harshaAcc.getMovements().push(250)
+console.log(harshaAcc)
  * 
  * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 17. Chaining Methods
+ * ----------------------
+ * - if we want to chain methods like this: acc1.deposit(100).deposit(200).withdraw(50).requestLoan(1000)
+ *  - this is possible by returning 'this' keyword in every method that we want to chain
+ * 
+ * - so, in every method we have to return 'this' keyword to make the chaining possible .. this will enable chaining of methods
  * 
  * 
+deposit(val) {
+    this.#movements.push(val)
+    return this
+}
+withdraw(val){
+    this.deposit(-val)
+    return this
+}
+requestLoan(val) {
+    if(this.#approveLoan(val)) {
+        this.deposit(val)
+        console.log(`Loan approved: ${val}`)
+    }
+    return this
+}
+
+// - so, we can chain the methods like this:
+harshaAcc.deposit(100).deposit(200).withdraw(50).requestLoan(1000)
  * 
  * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 18. ES6 Classes Summary
+ * -------------------------
+ * 
+PARENT CLASS:
+---
+class Person{
+    constructor(firstName, birthYear) {
+        this.firstName = firstName
+        this.birthYear = birthYear
+    }
+}
+
+CHILD CLASS:
+---
+// ! KEYWORDS Used:
+- 'class': is used to define a class 
+- 'extends': is used to inherit a child class from a parent class .. this also takes care of prototype chaining automatically
+- 'static': to make any field or method static and available on the class itself but not on the instances
+- 'super': is used to make a call to 'parent' class constructor inside the 'child' class constructor .. this has to be called before 'this' keyword is used inside the constructor
+- 'get': is used to define a getter method .. we can get a value out of an object by simply writing a methods instead of writing a method
+- 'set': we can define a prop by setting a value to it (instead of calling a method) .. if we have a setter for a prop that is already defined then we define a new prop by prefixing it with '_'
+
+
+//! CONSTRUCTOR method: constructor(){...} => this is a method that is called with 'new' operator.. when a new object is created from a class
+
+//! Diff between Instance Properties and Public fields / properties:
+- we set these instance props based on the input data of the constructor method (unique for each object) => ex: "startYear"
+- but 'public fields' are same for all the objects created from the class => ex: "university"
+
+//! STATIC methods:
+- static methods can only access other static methods and fields but not the instance methods or instance fields
+
+//? child class: 'STUDENT' is "extending" from parent: 'PERSON' class and it sets a "prototype chain" automatically!
+class Student extends Person{
+    
+//? PUBLIC fields => available on every created instance / object of the class but not on the prototype
+    university = 'IIT';
+
+//? PRIVATE fields: 'NOT' accessible from outside of the class
+    #studyHours = 2;
+    #course;
+
+//? Static field (PUBLIC): available on the class itself but not on the instances/objects
+    static numSubjects = 12;
+
+//! Constructor Method Starts..
+//? constructor method: to set properties of the class
+    constructor(firstName, birthYear, startYear, course) {
+        super(firstName, birthYear)
+
+//? Instance Property: 'this' keyword is used to set properties on the class
+        this.startYear = startYear
+        this.#course = course //? Redefining Private Field and assigning a value to it from constructor method
+    }
+//! Constructor Method Ends..
+
+//? Private Method: 
+    #makeCoffee() {
+        console.log('Here is the coffee you asked for!')
+    }
+    study(h) {
+        this.#makeCoffee()                                  //? referencing a private method inside a public method
+        this.#studyHours = this.#studyHours + h             //? referencing a private field inside a public method
+    }
+
+//? Getters and Setters: to get and set the values of the properties of the class 
+    get testScore() {
+        return this._testScore
+    }
+    set testScore(score) {
+        this._testScore = score
+    }
+
+//? Static Method: available on the class itself but not on the instances/objects
+    static printCurriculum() {
+        console.log(`There are ${this.numSubjects} subjects in the curriculum`)     //? .numSubjects is a static field
+    }
+}
+
+//! 'new' operator: to create an INSTANCE / OBJECT from a class
+const harsha = new Student('Harsha', 2001, 2018, 'Computer Science')
  * 
  * 
+ * Summary:
+ * --
+ * - ES6 classes are a huge improvement over the old constructor functions
+ * - Classes are 'Syntactic Sugar' over constructor functions
+ * - Classes are NOT hoisted .. and are 1st-class citizens and a Class body is always executed in 'strict mode'
  * 
  * 
+ * ! ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * ! 19. Coding Challenge #4
+ * -------------------------
  * 
  * 
+1. Re-create challenge #3, but this time using ES6 classes: create an 'EVCl' child class of the 'CarCl' class
+2. Make the 'charge' property private;
+3. Implement the ability to chain the 'accelerate' and 'chargeBattery' methods of this class, 
+    and also update the 'brake' method in the 'CarCl' class. They experiment with chining!
+
+DATA CAR 1: 'Rivian' going at 120 km/h, with a charge of 23%
  * 
- * 
- * 
- * 
+class CarCl {
+    constructor(make, speed) {
+        this.make = make;
+        this.speed = speed;
+    }
+
+    // methods
+    accelerate() {
+        this.speed = this.speed + 10
+        return this.speed
+    }
+    brake() {
+        this.speed = this.speed - 5
+        console.log(`${this.make} is going at ${this.speed}`)
+        return this
+    }
+
+    // getter
+    get speedUS() {
+        return this.speed / 1.6
+    }
+
+    // setter
+    set speedUs(speed) {
+        this.speed = speed * 1.6
+    }
+}
+
+class EVCl extends CarCl{
+    #charge;
+    constructor(make, speed, charge){
+        super(make, speed)
+        this.#charge = charge
+    }
+
+    chargeBattery (chargeTo) {
+        this.#charge = chargeTo
+        return this
+    } 
+
+    accelerate() {
+        this.speed = this.speed + 20
+        this.#charge = this.#charge - 1
+        console.log(`${this.make} EV is going at ${this.speed} with a charge of ${this.#charge}`)
+        return this
+    }
+}
+const ferrari = new EVCl('Ferrari', 120, 23)
+console.log(ferrari)
+
+ferrari.accelerate().accelerate().accelerate().brake().chargeBattery(50).accelerate()
  * 
  * 
  * 
